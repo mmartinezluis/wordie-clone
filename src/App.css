@@ -55,3 +55,9 @@
   background-color:green;
   transition: 1s;
 }
+
+
+.simple-keyboard {
+  max-width: 500px;
+  margin: 12px auto;
+}

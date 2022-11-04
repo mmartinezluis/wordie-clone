@@ -4,6 +4,8 @@ import React, {
   useState
 } from 'react';
 import './App.css';
+import KeyBoard from 'react-simple-keyboard';
+import "react-simple-keyboard/build/css/index.css";
 // import logo from './logo.svg';
 
 // Used for accessing the current row, namely, queue[0])
@@ -164,6 +166,7 @@ function App() {
       inputs={inputs}
       assertion={assertion}
     />
+    < KeyBoard />
     </div>
   );
 }
