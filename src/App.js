@@ -18,7 +18,7 @@ const dictionary = {TARGET: "TARGET"};
 const TARGET = "HELLO";
 const TARGET_MAP = {};
 for(let char of TARGET) {
-  // '1' means the character is in the stricg; not the count of the character
+  // '1' means the character is in the string; not the count of the character
   TARGET_MAP[char] = 1;
 }
 let placeHolderCounter = 0;
@@ -75,7 +75,8 @@ function App() {
   }
 
   const detectKeyDown = useCallback((e) => {
-    const key = e.key.toUpperCase();
+    // const key = e.key.toUpperCase();
+    const key = e.key ? e.key.toUpperCase() : e;
     const row = queue[0];
     console.log(key)
     if(key === 'ENTER') {
@@ -120,7 +121,7 @@ function App() {
         setInputs([...inputs, inputs[row][counter] = ""]);
         return;
       }
-    } else if(alphabet[key] || key === " ") {
+    } else if(alphabet[key] || key === " " || key === "SPACE") {
       if(counter > 4) return;
       setInputs([
         ...inputs, 
@@ -157,6 +158,7 @@ function App() {
       layout={keyboardLayout}
       layoutName="default"
       display={keyboardDisplay}
+      onKeyPress={detectKeyDown}
     />
     </div>
   );
