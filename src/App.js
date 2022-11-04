@@ -6,6 +6,7 @@ import React, {
 import './App.css';
 import KeyBoard from 'react-simple-keyboard';
 import "react-simple-keyboard/build/css/index.css";
+import {keyboardLayout, keyboardDisplay}  from './keyboard.js';
 // import logo from './logo.svg';
 
 // Used for accessing the current row, namely, queue[0])
@@ -138,8 +139,8 @@ function App() {
 
 
   useEffect(() => {
-    console.log("In use effect")
-    document.addEventListener('keydown', detectKeyDown, true)
+    console.log("In use effect");
+    document.addEventListener('keydown', detectKeyDown, true);
     return () => {
       document.removeEventListener('keydown', {}, undefined)
     };
@@ -147,26 +148,16 @@ function App() {
 
   return (
     <div className="App">
-      {/* <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.          
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header> */}
     <h1>Wordie Clone</h1>
     <Board 
       inputs={inputs}
       assertion={assertion}
     />
-    < KeyBoard />
+    <KeyBoard 
+      layout={keyboardLayout}
+      layoutName="default"
+      display={keyboardDisplay}
+    />
     </div>
   );
 }
@@ -195,3 +186,20 @@ const Board = ({inputs, assertion}) => {
     </div>
   )
 }
+
+
+
+{/* <header className="App-header">
+  <img src={logo} className="App-logo" alt="logo" />
+  <p>
+    Edit <code>src/App.js</code> and save to reload.          
+  </p>
+  <a
+    className="App-link"
+    href="https://reactjs.org"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Learn React
+  </a>
+</header> */}
