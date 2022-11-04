@@ -1,8 +1,14 @@
-import React, {useCallback, useEffect, useState} from 'react';
-// import logo from './logo.svg';
+import React, {
+  useCallback, 
+  useEffect, 
+  useState
+} from 'react';
 import './App.css';
+// import logo from './logo.svg';
 
+// Used for accessing the current row, namely, queue[0])
 const queue = [0,1,2,3,4,5];
+// Used for counting the characters in current row
 let counter = 0;
 let alphabet = {A:'A',B:'B',C:'C',D:'D',E:'E',F:'F',G:'G',H:'H',I:'I',J:'J',K:'K',L:'L',M:'M',N:'N',O:'O',P:'P',Q:'Q',R:'R',S:'S',T:'T',U:'U',V:'V',W:'W',X:'X',Y:'Y',Z:'Z'};
 const dictionary = {TARGET: "TARGET"};
@@ -12,8 +18,10 @@ for(let char of TARGET) {
   // '1' means the character is in the stricg; not the count of the character
   TARGET_MAP[char] = 1;
 }
-const attempts = {};
 let placeHolderCounter = 0;
+// Stores the user's processed words
+const attempts = {};
+// Used as inputs in the assertion matrix below
 const BLANK = "";
 const MISSED = "missed";
 const CLOSE = "close";
@@ -21,7 +29,9 @@ const RIGHT = "right";
 
 function App() {
 
+  // User input characters matrix
   const [inputs, setInputs] = useState(new Array(6).fill(0).map(el => new Array(5).fill("")));
+  // Color codes matrix for processed words
   const [assertion, setAssertion] = useState(new Array(6).fill(0).map(el => new Array(5).fill(BLANK)));
 
   const didWinGame = useCallback((row, word_array) => {
@@ -90,6 +100,7 @@ function App() {
         display("Congratulations!!!")
         return;
       };
+      // Game was not won; remove access to current row and proceed to next row
       queue.shift();
       counter = 0;
       if(!queue.length) {
