@@ -1,15 +1,20 @@
+import React, {useEffect} from 'react';
 import logo from './logo.svg';
 import './App.css';
-import something from './testing-node-modules';
 
 function App() {
+  useEffect(() => {
+    "effect"
+    return () => {
+      // cleanup
+    };
+  }, []);
   return (
     <div className="App">
-      <header className="App-header">
+      {/* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
-          {something}
+          Edit <code>src/App.js</code> and save to reload.          
         </p>
         <a
           className="App-link"
@@ -19,9 +24,13 @@ function App() {
         >
           Learn React
         </a>
-      </header>
+      </header> */}
+    <h1>Wordie Clone</h1>
     </div>
   );
 }
 
 export default App;
+
+
+// const board = 
