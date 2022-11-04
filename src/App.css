@@ -36,3 +36,22 @@
     transform: rotate(360deg);
   }
 }
+.board {
+  font-size: 26px;
+  font-weight: 600;
+}
+.cell.missed {
+  color: white;
+  background-color:slategrey;
+  transition: 1s;
+}
+.cell.close {
+  color: white;
+  background-color: rgba(247, 224, 16, 0.659);
+  transition: 1s;
+}
+.cell.right {
+  color: white;
+  background-color:green;
+  transition: 1s;
+}
