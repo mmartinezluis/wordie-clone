@@ -13,6 +13,7 @@ for(let char of TARGET) {
   TARGET_MAP[char] = 1;
 }
 const attempts = {};
+let placeHolderCounter = 0;
 const BLANK = "";
 const MISSED = "missed";
 const CLOSE = "close";
@@ -65,6 +66,11 @@ function App() {
     const row = queue[0];
     console.log(key)
     if(key === 'ENTER') {
+      if(placeHolderCounter > 0) {
+        display("Please remove placeholders");
+        console.log("Please remove placeholders")
+        return;
+      }
       if(counter < 5) {
         display("Not enough letters");
         console.log("Not enough letters")
@@ -96,12 +102,23 @@ function App() {
     } else if(key === 'BACKSPACE') {
       if(counter > 0 && counter <= 5) {
         counter -= 1;
+        if(inputs[row][counter] === "-") placeHolderCounter--;
         setInputs([...inputs, inputs[row][counter] = ""]);
         return;
       }
-    } else if(alphabet[key]) {
+    } else if(alphabet[key] || key === " ") {
       if(counter > 4) return;
-      setInputs([...inputs, inputs[row][counter] = key])
+      setInputs([
+        ...inputs, 
+          inputs[row][counter] = (function(){
+            if(alphabet[key]) {
+              return key;
+            } else {
+              if(placeHolderCounter < 5) placeHolderCounter++;
+              return "-";
+            }
+          })()
+      ]);
       counter += 1;
     }
   },[didWinGame, inputs])
