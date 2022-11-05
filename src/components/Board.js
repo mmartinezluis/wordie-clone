@@ -54,6 +54,7 @@ const Board = () => {
   // editableCell variable is an empty string in detectKeyDown function even after setting it to an id string on the cell's click event)
   const [editableCell, setEditableCell] = useState("");
   const editableCellRef = useRef("");
+  // Used for setting color codes for keyboard
   const [dynamicButtonSettings, setDynamicButtonSettings] = useState(buttonTheme);
 
 
@@ -61,7 +62,6 @@ const Board = () => {
     let correct = 0;
     const steps = TARGET.length;
     const step_delay = 500;
-    // let temp;
     // create a delayedSteps function, which runs a loop, each loop step taking a step_delay time to execute
     function delayedSteps(i) {
        setTimeout(function() {
@@ -75,7 +75,6 @@ const Board = () => {
           } else {
             setAssertion([...assertion, assertion[row][index] = CLOSE]);
           }
-          // setDynamicButtonSetting([...dynamicButtonSetting, dynamicButtonSetting[temp = code === "missed" ? 0 : code === "close" ? 1 : 2].buttons= dynamicButtonSetting[temp].buttons.trim() + " " + inputs[row][index] ]); 
           delayedSteps(i);
         } 
       }, i === steps ? 300 : step_delay)
@@ -211,7 +210,7 @@ const Board = () => {
 
 
   useEffect(() => {
-    // Ensures that use effect runs only once
+    // ensures that use effect runs only once
     if(!page.current) {
       page.current = document;
       page.current.addEventListener('keydown', detectKeyDown, false);
@@ -221,10 +220,10 @@ const Board = () => {
   
   return (
     <div>
-      <div className='board' style={{display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
+      <div className='board'>
           {new Array(6).fill(0).map((row_el, row_index) => {
               return (
-              <div key={row_index} className='row' style={{display: 'flex'}}>
+              <div key={row_index} className='row'>
                   {new Array(5).fill(0).map((col_el, col_index) => {
                       const cell_id = "" + row_index + col_index;
                       return (
@@ -239,7 +238,6 @@ const Board = () => {
                               dataid={cell_id}
                               key={parseInt(cell_id)} 
                               className={`cell ${assertion[row_index][col_index]} ${editableCell === cell_id ? "glow" : ""}`} 
-                              style={{border: 'black solid 1.5px', width: '50px', height: '50px', display: 'flex', justifyContent:'center', alignItems:'center', margin: '3px'}}
                           >
                               {inputs[row_index][col_index]}    
                           </div>

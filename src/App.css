@@ -39,7 +39,24 @@
 .board {
   font-size: 30px;
   font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+
+.row {
+  display: flex;
+}
+.cell {
+  border: black solid 1.5px; 
+  width: 50px; 
+  height: 50px; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  margin: 3px;
+}
+
 .cell.missed,
 .simple-keyboard.hg-layout-default  .hg-button.missed {
   color: white;
