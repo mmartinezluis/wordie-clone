@@ -32,13 +32,13 @@ const Board = () => {
   const page = useRef(null);
   // User input characters matrix
   const [inputs, setInputs] = useState(new Array(6).fill(0).map(el => new Array(5).fill("")));
-  // Color codes matrix for processed words
+  // Color codes matrix (assertion matrix) for processed words
   const [assertion, setAssertion] = useState(new Array(6).fill(0).map(el => new Array(5).fill(BLANK)));
-  const [editablecell, setEditablecell] = useState("");
-  // const editablecell = useRef("");
-  const [glow, setGlow] = useState(true);
-
-  
+  // Two variables are needed to successfully toggle the "glow" class name on a cell (editableCell variable)
+  // and to read the id of the toggled cell in the detectKeyDown function (editableCellRef variable;
+  // editableCell variable is an empty string in detectKeyDown function even after setting it to an id string on the cell's click event)
+  const [editableCell, setEditableCell] = useState("");
+  const editableCellRef = useRef("");
 
   const processWord= useCallback((row, word_array) => {
     let correct = 0;
@@ -60,7 +60,6 @@ const Board = () => {
     })(TARGET.length)
     if(correct === TARGET.length) return 1;
     attempts[word_array.join("")] = 1;
-    console.log(assertion)
     return 0;
   },[assertion])
 
@@ -81,26 +80,20 @@ const Board = () => {
 
   }
 
-  const editCell = (e) => {
-    const id = e.target.attributes.dataid.value;
-    if(inputs[id[0]][id[1]] !== "") {
-      // cellToEdit = id;
-      setEditablecell(id);
-      // editablecell.current = id;
-    }
-    console.log(e.target)
-    console.log(editablecell)
-  }
+  const editCell = useCallback((row, key) => {
+    console.log("waiting on edits");
+    // If user input is a placeholder and editable cell currently has a letter, increase placeholder count
+    if(!alphabet[key] && inputs[row][editableCellRef.current[1]] !== "-") placeHolderCounter++;
+    // If user input is a letter and editable cell currently has a placeholder, decrease placeholder count
+    if(alphabet[key] && inputs[row][editableCellRef.current[1]] === "-" ) placeHolderCounter--;
+    setInputs([...inputs, inputs[row][editableCellRef.current[1]] = alphabet[key] ? key : "-"]);
+    editableCellRef.current = "";
+    setEditableCell("");
+    return;
+  },[inputs])
 
   const detectKeyDown = useCallback((e) => {
-    // const key = e.key.toUpperCase();
-    console.log(editablecell)
-    if(editablecell.length) {
-      console.log("waiting on edits");
-      const cell = document.querySelector('.glow');
-      console.log(cell)
-      // return;
-    }
+    // 'e.key' comes from typing on device keyborad; 'e' alone comes from typing (clicking) on page keyboard
     const key = e.key ? e.key.toUpperCase() : e;
     const row = queue[0];
     console.log(key)
@@ -144,9 +137,16 @@ const Board = () => {
         counter -= 1;
         if(inputs[row][counter] === "-") placeHolderCounter--;
         setInputs([...inputs, inputs[row][counter] = ""]);
+        // If user pressed backspace after clicking on an editable cell, deactivate the editable cell
+        if(editableCellRef.current.length) {
+          editableCellRef.current = "";
+          setEditableCell("");
+        }
         return;
       }
     } else if(alphabet[key] || key === " " || key === "SPACE") {
+      // If user had clicked on a non-empty cell in the current row, allow that cell to be editable with the user's last input
+      if(editableCellRef.current.length) return editCell(row, key);
       if(counter > 4) return;
       setInputs([
         ...inputs, 
@@ -161,7 +161,7 @@ const Board = () => {
       ]);
       counter += 1;
     }
-  },[didWinGame, inputs, editablecell])
+  },[didWinGame, inputs, editCell])
 
 
   useEffect(() => {
@@ -172,22 +172,28 @@ const Board = () => {
     }
   },[detectKeyDown]);
 
-  console.log("board was rendered", glow)
-
+  
   return (
+    <>
+    Editable is now {editableCell}
     <div className='board' style={{display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
         {new Array(6).fill(0).map((row_el, row_index) => {
             return (
             <div key={row_index} className='row' style={{display: 'flex'}}>
                 {new Array(5).fill(0).map((col_el, col_index) => {
                     const cell_id = "" + row_index + col_index;
-                    console.log(editablecell, editablecell === cell_id)
                     return (
                         <div 
-                            onClick={(e) => row_index === queue[0] ? editCell(e) : null } 
+                            onClick={(e) => {
+                              if(row_index === queue[0] && inputs[row_index][col_index] !== "") {
+                                console.log(e.target)
+                                editableCellRef.current = cell_id;
+                                setEditableCell(cell_id) 
+                              } 
+                            }} 
+                            dataid={cell_id}
                             key={parseInt(cell_id)} 
-                            dataid={cell_id} 
-                            className={`cell ${assertion[row_index][col_index]} ${editablecell === cell_id ? "glow" : ""}`} 
+                            className={`cell ${assertion[row_index][col_index]} ${editableCell === cell_id ? "glow" : ""}`} 
                             style={{border: 'black solid 1.5px', width: '50px', height: '50px', display: 'flex', justifyContent:'center', alignItems:'center', margin: '5px'}}
                         >
                             {inputs[row_index][col_index]}    
@@ -198,10 +204,11 @@ const Board = () => {
             )
         })}
     </div>
+    </>
   )
 }
 
 // export const detectKeyDown
 
-export default Board
+export default Board;
 

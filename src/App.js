@@ -12,7 +12,7 @@ function App() {
   return (
     <div className="App">
       <h1>Wordle Clone</h1>
-      <button onClick={() => console.log("ehh")}>HEY</button>
+      {/* <button onClick={() => console.log("ehh")}>HEY</button> */}
       <Board 
         // inputs={inputs}
         // assertion={assertion}

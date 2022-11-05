@@ -55,8 +55,9 @@
   background-color:green;
   transition: 1s;
 }
-.cell.glow {
-  border: blue solid 3px;
+.glow {
+  border: blue solid 3px !important;
+  transform: 1s;
 }
 
 
