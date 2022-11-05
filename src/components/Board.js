@@ -4,7 +4,14 @@ import React, {
     useRef, 
     useState
 } from 'react';
+import Keyboard from 'react-simple-keyboard';
+import "react-simple-keyboard/build/css/index.css";
+import {
+  keyboardLayout, 
+  keyboardDisplay
+} from './keyboardConfig.js';
 
+//*********** Board variables ****************
 // Used for accessing the current row, namely, queue[0])
 let queue = [0,1,2,3,4,5];
 // Used for counting the characters in current row
@@ -26,6 +33,14 @@ const MISSED = "missed";
 const CLOSE = "close";
 const RIGHT = "right";
 
+//*********** Keyboard variables ****************
+// Keyboard dynamic settings
+const buttonTheme = [
+  {class: MISSED, buttons: " "},
+  {class: CLOSE, buttons: " "},
+  {class: RIGHT, buttons: " "}
+]
+
     
 const Board = () => {
   // Used to attach/dettach a keydown event listerner on the page
@@ -39,12 +54,14 @@ const Board = () => {
   // editableCell variable is an empty string in detectKeyDown function even after setting it to an id string on the cell's click event)
   const [editableCell, setEditableCell] = useState("");
   const editableCellRef = useRef("");
+  const [dynamicButtonSettings, setDynamicButtonSettings] = useState(buttonTheme);
 
 
   const processWord= useCallback(async (row, word_array) => {
     let correct = 0;
     const steps = TARGET.length;
-    const step_delay = 700;
+    const step_delay = 500;
+    // let temp;
     // create a delayedSteps function, which runs a loop, each loop step taking a step_delay time to execute
     function delayedSteps(i) {
        setTimeout(function() {
@@ -58,20 +75,25 @@ const Board = () => {
           } else {
             setAssertion([...assertion, assertion[row][index] = CLOSE]);
           }
+          // setDynamicButtonSetting([...dynamicButtonSetting, dynamicButtonSetting[temp = code === "missed" ? 0 : code === "close" ? 1 : 2].buttons= dynamicButtonSetting[temp].buttons.trim() + " " + inputs[row][index] ]); 
           delayedSteps(i);
         } 
-      }, i === steps ? 500 : step_delay)
+      }, i === steps ? 300 : step_delay)
     }
     return new Promise(resolve => {
+        // fires after first time option in time argument
         delayedSteps(steps);
+        // fires after the step*step_delay time product 
         setTimeout(() => {  
           console.log('response is', correct)
+          let temp;
+          for(let [index,code] of assertion[row].entries()) setDynamicButtonSettings([...dynamicButtonSettings, dynamicButtonSettings[temp = code === "missed" ? 0 : code === "close" ? 1 : 2].buttons= inputs[row][index] + " " + dynamicButtonSettings[temp].buttons.trim() ]);
           if(correct === TARGET.length) return resolve(1);
           attempts[word_array.join("")] = 1;
           return resolve(0);
-        }, steps*step_delay)
+        }, steps*step_delay + 500)
     })
-  },[assertion])
+  },[assertion, dynamicButtonSettings, inputs])
 
   const didWinGame = useCallback(async (row, word_array) => {
     return processWord(row, word_array);
@@ -108,6 +130,8 @@ const Board = () => {
 
 
   const detectKeyDown = useCallback(async (e) => {
+    // If no row to process, skip the function
+    if(!queue.length) return;
     // 'e.key' comes from typing on device keyborad; 'e' alone comes from typing (clicking) on page keyboard
     const key = e.key ? e.key.toUpperCase() : e;
     const row = queue[0];
@@ -137,6 +161,9 @@ const Board = () => {
       page.current.removeEventListener('keydown', detectKeyDown, false);
       // Deactivate editable cell click event
       queue[0] = undefined;
+      // Remove editableCell selection if user had selected a cell before pressing Enter
+      clearEditable();
+      // Stop code execution until 'processWord' is done (uses promises + setTimeout)
       const didWinGame = await processWord(row, inputs[row]);
       console.log(didWinGame)
       if(didWinGame) {
@@ -193,41 +220,46 @@ const Board = () => {
 
   
   return (
-    <>
-    Editable is now {editableCell}
-    <div className='board' style={{display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
-        {new Array(6).fill(0).map((row_el, row_index) => {
-            return (
-            <div key={row_index} className='row' style={{display: 'flex'}}>
-                {new Array(5).fill(0).map((col_el, col_index) => {
-                    const cell_id = "" + row_index + col_index;
-                    return (
-                        <div 
-                            onClick={(e) => {
-                              if(row_index === queue[0] && inputs[row_index][col_index] !== "") {
-                                console.log(e.target)
-                                editableCellRef.current = cell_id;
-                                setEditableCell(cell_id) 
-                              } 
-                            }} 
-                            dataid={cell_id}
-                            key={parseInt(cell_id)} 
-                            className={`cell ${assertion[row_index][col_index]} ${editableCell === cell_id ? "glow" : ""}`} 
-                            style={{border: 'black solid 1.5px', width: '50px', height: '50px', display: 'flex', justifyContent:'center', alignItems:'center', margin: '5px'}}
-                        >
-                            {inputs[row_index][col_index]}    
-                        </div>
-                    )
-                })}
-            </div>
-            )
-        })}
+    <div>
+      <div className='board' style={{display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
+          {new Array(6).fill(0).map((row_el, row_index) => {
+              return (
+              <div key={row_index} className='row' style={{display: 'flex'}}>
+                  {new Array(5).fill(0).map((col_el, col_index) => {
+                      const cell_id = "" + row_index + col_index;
+                      return (
+                          <div 
+                              onClick={(e) => {
+                                if(row_index === queue[0] && inputs[row_index][col_index] !== "") {
+                                  console.log(e.target)
+                                  editableCellRef.current = cell_id;
+                                  setEditableCell(cell_id) 
+                                } 
+                              }} 
+                              dataid={cell_id}
+                              key={parseInt(cell_id)} 
+                              className={`cell ${assertion[row_index][col_index]} ${editableCell === cell_id ? "glow" : ""}`} 
+                              style={{border: 'black solid 1.5px', width: '50px', height: '50px', display: 'flex', justifyContent:'center', alignItems:'center', margin: '3px'}}
+                          >
+                              {inputs[row_index][col_index]}    
+                          </div>
+                      )
+                  })}
+              </div>
+              )
+          })}
+      </div>
+      <Keyboard 
+        layout={keyboardLayout}
+        layoutName="default"
+        display={keyboardDisplay}
+        buttonTheme={dynamicButtonSettings}
+        onKeyPress={detectKeyDown}
+      />
     </div>
-    </>
   )
 }
 
-// export const detectKeyDown
 
 export default Board;
 

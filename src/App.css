@@ -37,20 +37,24 @@
   }
 }
 .board {
-  font-size: 26px;
-  font-weight: 600;
+  font-size: 30px;
+  font-weight: 700;
 }
-.cell.missed {
+.cell.missed,
+.simple-keyboard.hg-layout-default  .hg-button.missed {
   color: white;
   background-color:slategrey;
   transition: 0.7s;
 }
-.cell.close {
+
+.cell.close,
+.simple-keyboard.hg-layout-default .hg-button.close {
   color: white;
   background-color: rgba(247, 224, 16, 0.659);
   transition: 0.7s;
 }
-.cell.right {
+.cell.right,
+.simple-keyboard.hg-layout-default  .hg-button.right {
   color: white;
   background-color:green;
   transition: 0.7s;
@@ -65,5 +69,7 @@
   max-width: 500px;
   margin: 12px auto;
 }
+
+
 
 

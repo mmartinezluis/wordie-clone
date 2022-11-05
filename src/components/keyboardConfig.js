@@ -16,7 +16,8 @@ const keyboardConfig = {
 
 export const {
     keyboardLayout, 
-    keyboardDisplay 
+    keyboardDisplay,
+    buttonTheme 
 } = keyboardConfig;
 
 
