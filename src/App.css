@@ -55,9 +55,14 @@
   background-color:green;
   transition: 1s;
 }
+.cell.glow {
+  border: blue solid 3px;
+}
 
 
 .simple-keyboard {
   max-width: 500px;
   margin: 12px auto;
 }
+
+

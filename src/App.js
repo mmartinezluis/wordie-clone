@@ -30,36 +30,55 @@ const MISSED = "missed";
 const CLOSE = "close";
 const RIGHT = "right";
 
+// let cellToEdit = "";
+
 function App() {
 
   // User input characters matrix
   const [inputs, setInputs] = useState(new Array(6).fill(0).map(el => new Array(5).fill("")));
   // Color codes matrix for processed words
   const [assertion, setAssertion] = useState(new Array(6).fill(0).map(el => new Array(5).fill(BLANK)));
+  const [cellToEdit, setCellToEdit] = useState("");
 
-  const didWinGame = useCallback((row, word_array) => {
-    return processWord(row, word_array);
-  },[])
-
-  function processWord(row, word_array) {
+  const processWord= useCallback((row, word_array) => {
     let correct = 0;
-    for(let i = 0; i < TARGET.length; i++) {
-      setTimeout(() => {
-        if(!TARGET_MAP[word_array[i]]){ 
-          setAssertion([...assertion, assertion[row][i] = MISSED ]);
-        } else if(word_array[i] === TARGET[i]) {
-          setAssertion([...assertion, assertion[row][i] = RIGHT]);
-          correct++;
-        } else {
-          setAssertion([...assertion, assertion[row][i] = CLOSE]);
+    (function delay(i) {
+      setTimeout(function() {
+        const index = TARGET.length - i;
+        if(i--) {
+          if(!TARGET_MAP[word_array[index]]){ 
+            setAssertion([...assertion, assertion[row][index] = MISSED ]);
+          } else if(word_array[index] === TARGET[index]) {
+            setAssertion([...assertion, assertion[row][index] = RIGHT]);
+            correct++;
+          } else {
+            setAssertion([...assertion, assertion[row][index] = CLOSE]);
+          }
+          delay(i);
         }
-      },i*1000)
-    }
+      }, 1000)
+    })(TARGET.length)
+    // for(let i = 0; i < TARGET.length; i++) {
+    //   setTimeout(() => {
+    //     if(!TARGET_MAP[word_array[i]]){ 
+    //       setAssertion([...assertion, assertion[row][i] = MISSED ]);
+    //     } else if(word_array[i] === TARGET[i]) {
+    //       setAssertion([...assertion, assertion[row][i] = RIGHT]);
+    //       correct++;
+    //     } else {
+    //       setAssertion([...assertion, assertion[row][i] = CLOSE]);
+    //     }
+    //   },i*1000)
+    // }
     if(correct === TARGET.length) return 1;
     attempts[word_array.join("")] = 1;
     console.log(assertion)
     return 0;
-  }
+  },[assertion])
+
+  const didWinGame = useCallback((row, word_array) => {
+    return processWord(row, word_array);
+  },[processWord])
 
   function validWord(word) {
     // if(!dictionary[word]) return false;
@@ -74,8 +93,25 @@ function App() {
 
   }
 
+  const editCell = (e) => {
+    const id = e.target.attributes.dataid.value;
+    if(inputs[id[0]][id[1]] !== "") {
+      // cellToEdit = id;
+      setCellToEdit(id);
+    }
+    console.log(e.target)
+    console.log(cellToEdit)
+  }
+
   const detectKeyDown = useCallback((e) => {
     // const key = e.key.toUpperCase();
+    console.log(cellToEdit.length)
+    if(cellToEdit.length) {
+      console.log("waiting on edits");
+      const cell = document.querySelector('.glow');
+      console.log(cell)
+      return;
+    }
     const key = e.key ? e.key.toUpperCase() : e;
     const row = queue[0];
     console.log(key)
@@ -112,7 +148,7 @@ function App() {
         display("The word was", TARGET);
         console.log("The word was", TARGET);
         // @TODO remove keydown event listener
-        document.removeEventListener('keydown', {}, undefined)
+        document.removeEventListener('keydown', detectKeyDown, true)
       }
     } else if(key === 'BACKSPACE') {
       if(counter > 0 && counter <= 5) {
@@ -136,23 +172,25 @@ function App() {
       ]);
       counter += 1;
     }
-  },[didWinGame, inputs])
+  },[didWinGame, inputs, cellToEdit.length])
 
 
   useEffect(() => {
     console.log("In use effect");
     document.addEventListener('keydown', detectKeyDown, true);
     return () => {
-      document.removeEventListener('keydown', {}, undefined)
+      // document.removeEventListener('keydown', {}, undefined)
     };
   },[]);
 
   return (
     <div className="App">
-    <h1>Wordie Clone</h1>
+    <h1>Wordle Clone</h1>
     <Board 
       inputs={inputs}
       assertion={assertion}
+      editCell={editCell}
+      cellToEdit={cellToEdit}
     />
     <KeyBoard 
       layout={keyboardLayout}
@@ -167,9 +205,7 @@ function App() {
 export default App;
 
 
-console.log("APP rendered")
-const Board = ({inputs, assertion}) => {
-  console.log(inputs)
+const Board = ({inputs, assertion, editCell, cellToEdit}) => {
   return(
     <div className='board' style={{display: 'flex', alignItems: 'center', flexDirection: 'column'}}>
       {new Array(6).fill(0).map((row_el, row_index) => {
@@ -177,7 +213,13 @@ const Board = ({inputs, assertion}) => {
           <div key={row_index} className='row' style={{display: 'flex'}}>
             {new Array(5).fill(0).map((col_el, col_index) => {
               return(
-                <div key={row_index + col_index} className={`cell ${assertion[row_index][col_index]}`} style={{border: 'black solid 1.5px', width: '50px', height: '50px', display: 'flex', justifyContent:'center', alignItems:'center', margin: '5px'}}>
+                <div 
+                  onClick={(e) => row_index === queue[0] ? editCell(e) : null } 
+                  key={row_index + col_index} 
+                  dataid={`${row_index}${col_index}`} 
+                  className={`cell ${assertion[row_index][col_index]} ${cellToEdit.length && cellToEdit === `${row_index}${col_index}` ? 'glow' : ''}`} 
+                  style={{border: 'black solid 1.5px', width: '50px', height: '50px', display: 'flex', justifyContent:'center', alignItems:'center', margin: '5px'}}
+                >
                   {inputs[row_index][col_index]}    
                 </div>
               )
