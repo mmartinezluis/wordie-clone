@@ -6,7 +6,7 @@ import React, {
 } from 'react';
 
 // Used for accessing the current row, namely, queue[0])
-const queue = [0,1,2,3,4,5];
+let queue = [0,1,2,3,4,5];
 // Used for counting the characters in current row
 let counter = 0;
 let alphabet = {A:'A',B:'B',C:'C',D:'D',E:'E',F:'F',G:'G',H:'H',I:'I',J:'J',K:'K',L:'L',M:'M',N:'N',O:'O',P:'P',Q:'Q',R:'R',S:'S',T:'T',U:'U',V:'V',W:'W',X:'X',Y:'Y',Z:'Z'};
@@ -26,9 +26,9 @@ const MISSED = "missed";
 const CLOSE = "close";
 const RIGHT = "right";
 
-// let cellToEdit = "";
     
 const Board = () => {
+  // Used to attach/dettach a keydown event listerner on the page
   const page = useRef(null);
   // User input characters matrix
   const [inputs, setInputs] = useState(new Array(6).fill(0).map(el => new Array(5).fill("")));
@@ -40,10 +40,14 @@ const Board = () => {
   const [editableCell, setEditableCell] = useState("");
   const editableCellRef = useRef("");
 
-  const processWord= useCallback((row, word_array) => {
+
+  const processWord= useCallback(async (row, word_array) => {
     let correct = 0;
-    (function delay(i) {
-      setTimeout(function() {
+    const steps = TARGET.length;
+    const step_delay = 700;
+    // create a delayedSteps function, which runs a loop, each loop step taking a step_delay time to execute
+    function delayedSteps(i) {
+       setTimeout(function() {
         const index = TARGET.length - i;
         if(i--) {
           if(!TARGET_MAP[word_array[index]]){ 
@@ -54,16 +58,22 @@ const Board = () => {
           } else {
             setAssertion([...assertion, assertion[row][index] = CLOSE]);
           }
-          delay(i);
-        }
-      }, 1000)
-    })(TARGET.length)
-    if(correct === TARGET.length) return 1;
-    attempts[word_array.join("")] = 1;
-    return 0;
+          delayedSteps(i);
+        } 
+      }, i === steps ? 500 : step_delay)
+    }
+    return new Promise(resolve => {
+        delayedSteps(steps);
+        setTimeout(() => {  
+          console.log('response is', correct)
+          if(correct === TARGET.length) return resolve(1);
+          attempts[word_array.join("")] = 1;
+          return resolve(0);
+        }, steps*step_delay)
+    })
   },[assertion])
 
-  const didWinGame = useCallback((row, word_array) => {
+  const didWinGame = useCallback(async (row, word_array) => {
     return processWord(row, word_array);
   },[processWord])
 
@@ -80,6 +90,11 @@ const Board = () => {
 
   }
 
+  const clearEditable = () => {
+    editableCellRef.current = "";
+    setEditableCell("");
+  }
+
   const editCell = useCallback((row, key) => {
     console.log("waiting on edits");
     // If user input is a placeholder and editable cell currently has a letter, increase placeholder count
@@ -87,12 +102,12 @@ const Board = () => {
     // If user input is a letter and editable cell currently has a placeholder, decrease placeholder count
     if(alphabet[key] && inputs[row][editableCellRef.current[1]] === "-" ) placeHolderCounter--;
     setInputs([...inputs, inputs[row][editableCellRef.current[1]] = alphabet[key] ? key : "-"]);
-    editableCellRef.current = "";
-    setEditableCell("");
+    clearEditable();
     return;
   },[inputs])
 
-  const detectKeyDown = useCallback((e) => {
+
+  const detectKeyDown = useCallback(async (e) => {
     // 'e.key' comes from typing on device keyborad; 'e' alone comes from typing (clicking) on page keyboard
     const key = e.key ? e.key.toUpperCase() : e;
     const row = queue[0];
@@ -118,10 +133,18 @@ const Board = () => {
         console.log("You already used that word");
         return;
       }
-      if(didWinGame(row, inputs[row])) {
+      // Deactivate user input while processing word
+      page.current.removeEventListener('keydown', detectKeyDown, false);
+      // Deactivate editable cell click event
+      queue[0] = undefined;
+      const didWinGame = await processWord(row, inputs[row]);
+      console.log(didWinGame)
+      if(didWinGame) {
+        queue = [];
         display("Congratulations!!!")
+        console.log("Congratulations")
         return;
-      };
+      } else page.current.addEventListener('keydown', detectKeyDown, false);
       // Game was not won; remove access to current row and proceed to next row
       queue.shift();
       counter = 0;
@@ -129,8 +152,7 @@ const Board = () => {
         lostGame();
         display("The word was", TARGET);
         console.log("The word was", TARGET);
-        // @TODO remove keydown event listener
-        document.removeEventListener('keydown', detectKeyDown, true)
+        page.current.removeEventListener('keydown', detectKeyDown, false)
       }
     } else if(key === 'BACKSPACE') {
       if(counter > 0 && counter <= 5) {
@@ -138,10 +160,7 @@ const Board = () => {
         if(inputs[row][counter] === "-") placeHolderCounter--;
         setInputs([...inputs, inputs[row][counter] = ""]);
         // If user pressed backspace after clicking on an editable cell, deactivate the editable cell
-        if(editableCellRef.current.length) {
-          editableCellRef.current = "";
-          setEditableCell("");
-        }
+        if(editableCellRef.current.length) clearEditable();
         return;
       }
     } else if(alphabet[key] || key === " " || key === "SPACE") {
@@ -161,7 +180,7 @@ const Board = () => {
       ]);
       counter += 1;
     }
-  },[didWinGame, inputs, editCell])
+  },[inputs, editCell, processWord])
 
 
   useEffect(() => {

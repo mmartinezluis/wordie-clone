@@ -43,21 +43,21 @@
 .cell.missed {
   color: white;
   background-color:slategrey;
-  transition: 1s;
+  transition: 0.7s;
 }
 .cell.close {
   color: white;
   background-color: rgba(247, 224, 16, 0.659);
-  transition: 1s;
+  transition: 0.7s;
 }
 .cell.right {
   color: white;
   background-color:green;
-  transition: 1s;
+  transition: 0.7s;
 }
 .glow {
   border: blue solid 3px !important;
-  transform: 1s;
+  transform: 0.5s;
 }
 
 
