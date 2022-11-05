@@ -54,7 +54,7 @@ const Board = () => {
   // editableCell variable is an empty string in detectKeyDown function even after setting it to an id string on the cell's click event)
   const [editableCell, setEditableCell] = useState("");
   const editableCellRef = useRef("");
-  // Used for setting color codes for keyboard
+  // Used for setting color codes for keyboard keys
   const [dynamicButtonSettings, setDynamicButtonSettings] = useState(buttonTheme);
 
 
