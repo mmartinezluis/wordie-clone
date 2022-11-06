@@ -79,9 +79,6 @@ function App() {
         <div className='header--title'>
           <h2>Wordle Clone</h2>
         </div>
-        <div className='header--new_game'>
-          <button onClick={() => ""}>New Game</button>
-        </div>
       </header>
       <Board 
         openModal={openModal} 

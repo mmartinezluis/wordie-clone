@@ -229,6 +229,9 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
   console.log("board was rendered")
   return (
     <div>
+      <div className='new_game'>
+        <button onClick={() => ""}>New Game</button>
+      </div>
       {/* This is the board */}
       <div className='board'>
           {new Array(6).fill(0).map((row_el, row_index) => {
