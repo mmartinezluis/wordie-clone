@@ -5,8 +5,8 @@ export const target_function = (word_list) => word_list[Math.floor(Math.random()
 export const TARGET_MAP_CONSTANT = {};
 export const PLACEHOLDERCOUNTER = 0;
 export const ATTEMPTS = {};
-// constants for assertion matrix
 export const BLANK = "";
+// constants for assertion matrix and page keyboard dynamic button settings
 export const MISSED = "missed";
 export const CLOSE = "close";
 export const RIGHT = "right";

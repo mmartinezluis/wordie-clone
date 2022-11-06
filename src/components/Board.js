@@ -20,7 +20,7 @@ import "react-simple-keyboard/build/css/index.css";
 import {keyboardLayout, keyboardDisplay, buttonTheme} from './keyboardConfig.js';
 import { modalCodes } from '../App.js';
 
-//*********** Board variables ****************
+//*********** Board stateless variables ****************
 let queue, counter, target, target_map, placeHolderCounter, attempts;
 
 
@@ -36,7 +36,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
   // editableCell variable is an empty string in detectKeyDown function even after setting it to an id string on the cell's click event)
   const [editableCell, setEditableCell] = useState(BLANK);
   const editableCellRef = useRef(BLANK);
-  // Used for setting color codes for keyboard keys
+  // Used for setting color codes for page keyboard keys
   const [dynamicButtonSettings, setDynamicButtonSettings] = useState(buttonTheme);
 
   const processWord= useCallback(async (row, word_array) => {
@@ -48,6 +48,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
        setTimeout(function() {
         const index = target.length - i;
         if(i--) {
+          // this logic adds background color to current row cells one character at a time
           if(!target_map[word_array[index]]){ 
             setAssertion([...assertion, assertion[row][index] = MISSED ]);
           } else if(word_array[index] === target[index]) {
@@ -60,13 +61,14 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
         } 
       }, i === steps ? 300 : step_delay)
     }
+    // promise + below setTimeout ensures program stops further code execution until done with the processWord function
     return new Promise(resolve => {
         // fires after first time option in time argument
         delayedSteps(steps);
         // fires after the step*step_delay time product 
         setTimeout(() => {  
-          console.log('response is', correct)
           let temp;
+          // this loops adds background color to the page's keyboard keys
           for(let [index,code] of assertion[row].entries()) setDynamicButtonSettings([...dynamicButtonSettings, dynamicButtonSettings[temp = code === "missed" ? 0 : code === "close" ? 1 : 2].buttons= inputs[row][index] + " " + dynamicButtonSettings[temp].buttons.trim() ]);
           if(correct === target.length) return resolve(1);
           attempts[word_array.join("")] = 1;
@@ -141,7 +143,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
       queue[0] = undefined;
       // Remove editableCell selection if user had selected a cell before pressing Enter
       clearEditable();
-      // Stop code execution until 'didWindGame and processWord' is done (uses promises + setTimeout)
+      // Stop code execution until 'didWindGame' and 'processWord' are done (use promises + setTimeout)
       if(await didWinGame(row, inputs[row])) {
         wonGame();
         return;
@@ -165,7 +167,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
         return;
       }
     } else if(ALPHABET[key] || key === " " || key === "SPACE") {
-      // If user had clicked on a non-empty cell in the current row, allow that cell to be editable with the user's last input
+      // If user had clicked on a non-empty cell in the current row, edit that cell with the user's last input
       if(editableCellRef.current.length) return editCell(row, key);
       if(counter > 4) return;
       setInputs([
@@ -200,17 +202,25 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
     placeHolderCounter = PLACEHOLDERCOUNTER;
     // stores the user's processed words
     attempts = ATTEMPTS;
+    // board state variables
     setInputs(INPUTS_MATRIX);
     setAssertion(ASSERTION_MATRIX);
+    // keyboard state variable; manages keyboard keys color codes
     setDynamicButtonSettings(buttonTheme);
+    // reinitializes the editable cell
     clearEditable();
+    // reinitializes the modal
     clearModal();
+    // this line runs one time only: when page loads
     if(!page.current) page.current = document;
+    // if user re-starts the game before finishing the game, makes sure event listener is not added twice to the page
+    page.current.removeEventListener('keydown', detectKeyDown, false);
+    // enable user's device keyboard to type on board
     page.current.addEventListener('keydown', detectKeyDown, false);
   },[clearModal, detectKeyDown])
 
   useEffect(() => {
-    // ensures that use effect runs only once
+    // ensures that code inside conditional runs only once, on page load
     if(!page.current) {
       reinitialzeGame();
     }
