@@ -3,6 +3,7 @@ import Keyboard from 'react-simple-keyboard';
 import "react-simple-keyboard/build/css/index.css";
 import {keyboardLayout,keyboardDisplay} from './keyboardConfig.js';
 import { WORD_LIST } from '../lib/wordList.js';
+import { modalCodes } from '../App.js';
 
 //*********** Board variables ****************
 // Used for accessing the current row, namely, queue[0])
@@ -34,7 +35,7 @@ const buttonTheme = [
 ]
 
     
-const Board = ({openModal}) => {
+const Board = ({ openModal, setIsOpen, setModalStatus, setModalText}) => {
   // Used to attach/dettach a keydown event listerner on the page
   const page = useRef(null);
   // User input characters matrix
@@ -90,15 +91,24 @@ const Board = ({openModal}) => {
     return processWord(row, word_array);
   },[processWord])
 
-  function validWord(row) {
+  const validWord = useCallback((row) => {
     return WORD_LIST.includes(inputs[row].join("").toLowerCase());
-  }
+  },[inputs])
 
-  const lostGame = useCallback( () => {
-    openModal("The word was", TARGET);
-    console.log("The word was", TARGET);
-    page.current.removeEventListener('keydown', detectKeyDown, false)
-  },[])
+  const wonGame = useCallback(() => {
+    queue = [];
+    setModalText(`Congratulations!!!\n You got the word, ${TARGET}`);
+    setModalStatus(modalCodes.won);
+    setIsOpen(true);
+  },[setModalText, setModalStatus, setIsOpen])
+
+  const lostGame = useCallback(( ) => {
+    queue = [];
+    setModalText(`Sorry, the word was ${TARGET}`);
+    setModalStatus(modalCodes.lost);
+    setIsOpen(true);
+  },[setModalText, setModalStatus, setIsOpen])
+
 
   const clearEditable = () => {
     editableCellRef.current = "";
@@ -151,19 +161,19 @@ const Board = ({openModal}) => {
       // Remove editableCell selection if user had selected a cell before pressing Enter
       clearEditable();
       // Stop code execution until 'processWord' is done (uses promises + setTimeout)
-      const didWinGame = await processWord(row, inputs[row]);
-      console.log(didWinGame)
-      if(didWinGame) {
-        queue = [];
-        openModal("Congratulations!!!")
-        console.log("Congratulations")
+      // const didWinGame = await processWord(row, inputs[row]);
+      // console.log(didWinGame)
+      if(await didWinGame(row, inputs[row])) {
+        wonGame();
         return;
       } else page.current.addEventListener('keydown', detectKeyDown, false);
       // Game was not won; remove access to current row and proceed to next row
       queue.shift();
       counter = 0;
       if(!queue.length) {
+        page.current.removeEventListener('keydown', detectKeyDown, false)
         lostGame();
+        return;
       }
     } else if(key === 'BACKSPACE') {
       if(counter > 0 && counter <= 5) {
@@ -191,7 +201,7 @@ const Board = ({openModal}) => {
       ]);
       counter += 1;
     }
-  },[inputs, editCell, processWord, lostGame, openModal, validWord])
+  },[inputs, editCell, didWinGame, openModal, validWord, wonGame, lostGame])
 
 
   useEffect(() => {
@@ -205,7 +215,6 @@ const Board = ({openModal}) => {
   
   return (
     <div>
-      GUESS: {TARGET}
       {/* This is the board */}
       <div className='board'>
           {new Array(6).fill(0).map((row_el, row_index) => {
@@ -234,6 +243,7 @@ const Board = ({openModal}) => {
               )
           })}
       </div>
+      {/* This is the keyboard */}
       <Keyboard 
         layout={keyboardLayout}
         layoutName="default"

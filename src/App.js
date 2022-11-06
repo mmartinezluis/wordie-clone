@@ -27,12 +27,18 @@ const modalCustomStyles = {
   }
 };
 
+export const modalCodes ={
+  won: "#2196f3",
+  missed: "rgb(244, 63, 94)",
+  lost: "#9c27b0"
+}
+
 Modal.setAppElement('#root');
 
 function App() {
 
   const [modalIsOpen, setIsOpen] = React.useState(false);
-  const [modalStatus, setModalStatus] = React.useState("rgb(244, 63, 94)");
+  const [modalStatus, setModalStatus] = React.useState(modalCodes.missed);
   const [modalText, setModalText] = React.useState("")
 
   const openModal = useCallback((text, time=3000) => {
@@ -61,7 +67,12 @@ function App() {
         </div>      
       </Modal>
       <h1>Wordle Clone</h1>
-      <Board openModal={openModal} />
+      <Board 
+        openModal={openModal} 
+        setIsOpen={setIsOpen}
+        setModalStatus={setModalStatus}
+        setModalText={setModalText}
+      />
     </div>
   );
 }
