@@ -14,14 +14,38 @@
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  /* background-color: #282c34; */
+  padding: 20px 10px 10px;
+  border-bottom: gray 1px solid;
+  box-shadow: darkgray;
+  /* min-height: 100vh; */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  /* align-items: center; */
+  /* justify-content: flex-start; */
+  /* font-size: calc(10px + 2vmin); */
+  margin-bottom: 35px;
+  /* color: white; */
+}
+
+.header--title {
+  text-align: center;
+}
+.header--filler {
+}
+.header--new_game button {
   color: white;
+  font-weight: 500;
+  background-color: #455a64;
+  /* background-color: #80d8ff; */
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: none;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  margin: 0px;
 }
 
 .App-link {
@@ -38,7 +62,7 @@
 }
 
 .board {
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 700;
   display: flex;
   flex-direction: column;
@@ -56,6 +80,7 @@
   justify-content: center; 
   align-items: center; 
   margin: 3px;
+  cursor: default;
 }
 
 .cell.missed,

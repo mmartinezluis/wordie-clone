@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import './App.css';
-import Board from './components/Board';
+import Board, { reinitialzeGame } from './components/Board';
 import Modal from 'react-modal';
 // import logo from './logo.svg';
 
@@ -50,6 +50,8 @@ function App() {
     }, time)
   },[])
 
+  // const newGame = (callback) => callback();
+
   return (
     <div className="App">
       <Modal
@@ -66,12 +68,21 @@ function App() {
             {modalText}
         </div>      
       </Modal>
-      <h1>Wordle Clone</h1>
+      <header className="App-header">
+        <div className='header--filler'></div>
+        <div className='header--title'>
+          <h2>Wordle Clone</h2>
+        </div>
+        <div className='header--new_game'>
+          <button onClick={() => reinitialzeGame()}>New Game</button>
+        </div>
+      </header>
       <Board 
         openModal={openModal} 
         setIsOpen={setIsOpen}
         setModalStatus={setModalStatus}
         setModalText={setModalText}
+        // newGame={newGame}
       />
     </div>
   );

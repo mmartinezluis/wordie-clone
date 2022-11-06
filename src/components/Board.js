@@ -17,7 +17,7 @@ import { modalCodes } from '../App.js';
 //*********** Board variables ****************
 let queue, counter, TARGET, TARGET_MAP, placeHolderCounter, attempts;
 
-const reinitialzeGame = () => {
+export const reinitialzeGame = () => {
   // Used for accessing the current row, namely, queue[0])
   queue = QUEUE;
   // Used for keeping track of next available position in current row
@@ -51,7 +51,7 @@ const buttonTheme = [
 ]
 
     
-const Board = ({ openModal, setIsOpen, setModalStatus, setModalText}) => {
+const Board = ({ openModal, setIsOpen, setModalStatus, setModalText }) => {
   // Used to attach/dettach a keydown event listerner on the page
   const page = useRef(null);
   // User input characters matrix
