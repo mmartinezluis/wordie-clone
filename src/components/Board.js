@@ -21,10 +21,10 @@ import {keyboardLayout, keyboardDisplay, buttonTheme} from './keyboardConfig.js'
 import { modalCodes } from '../App.js';
 
 //*********** Board variables ****************
-let queue, counter, TARGET, TARGET_MAP, placeHolderCounter, attempts;
+let queue, counter, target, target_map, placeHolderCounter, attempts;
 
 
-const Board = ({ openModal, setIsOpen, setModalStatus, setModalText }) => {
+const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal }) => {
   // Used to attach/dettach a keydown event listerner on the page
   const page = useRef(null);
   // User input characters matrix
@@ -39,42 +39,18 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText }) => {
   // Used for setting color codes for keyboard keys
   const [dynamicButtonSettings, setDynamicButtonSettings] = useState(buttonTheme);
 
-  const reinitialzeGame = () => {
-    // Used for accessing the current row, namely, queue[0])
-    queue = QUEUE;
-    // Used for keeping track of next available position in current row
-    counter = COUNTER;
-    // the word to discover
-    TARGET = target_function(WORD_LIST);
-    // hash map for checking presence of a given character in target word in constant time
-    TARGET_MAP = TARGET_MAP_CONSTANT;
-    for(let char of TARGET) {
-      // '1' means the character is in the string; not the count of the character
-      TARGET_MAP[char] = 1;
-    }
-    // keeps track of number of placeholder characters in current row
-    placeHolderCounter = PLACEHOLDERCOUNTER;
-    // stores the user's processed words
-    attempts = ATTEMPTS;
-    setInputs(INPUTS_MATRIX);
-    setAssertion(ASSERTION_MATRIX);
-    setEditableCell(BLANK);
-    editableCellRef.current = BLANK;
-    setDynamicButtonSettings(buttonTheme);
-  }
-
   const processWord= useCallback(async (row, word_array) => {
     let correct = 0;
-    const steps = TARGET.length;
+    const steps = target.length;
     const step_delay = 400;
     // create a delayedSteps function, which runs a loop, each loop step taking a step_delay time to execute
     function delayedSteps(i) {
        setTimeout(function() {
-        const index = TARGET.length - i;
+        const index = target.length - i;
         if(i--) {
-          if(!TARGET_MAP[word_array[index]]){ 
+          if(!target_map[word_array[index]]){ 
             setAssertion([...assertion, assertion[row][index] = MISSED ]);
-          } else if(word_array[index] === TARGET[index]) {
+          } else if(word_array[index] === target[index]) {
             setAssertion([...assertion, assertion[row][index] = RIGHT]);
             correct++;
           } else {
@@ -92,7 +68,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText }) => {
           console.log('response is', correct)
           let temp;
           for(let [index,code] of assertion[row].entries()) setDynamicButtonSettings([...dynamicButtonSettings, dynamicButtonSettings[temp = code === "missed" ? 0 : code === "close" ? 1 : 2].buttons= inputs[row][index] + " " + dynamicButtonSettings[temp].buttons.trim() ]);
-          if(correct === TARGET.length) return resolve(1);
+          if(correct === target.length) return resolve(1);
           attempts[word_array.join("")] = 1;
           return resolve(0);
         }, steps*step_delay + 500)
@@ -109,20 +85,20 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText }) => {
 
   const wonGame = useCallback(() => {
     queue = [];
-    setModalText(`Congratulations!!!\n You got the word, ${TARGET}`);
+    setModalText(`Congratulations!!!\n You got the word, ${target}`);
     setModalStatus(modalCodes.won);
     setIsOpen(true);
   },[setModalText, setModalStatus, setIsOpen])
 
   const lostGame = useCallback(( ) => {
-    setModalText(`Sorry, the word was ${TARGET}`);
+    setModalText(`Sorry, the word was ${target}`);
     setModalStatus(modalCodes.lost);
     setIsOpen(true);
   },[setModalText, setModalStatus, setIsOpen])
 
   const clearEditable = () => {
-    editableCellRef.current = "";
-    setEditableCell("");
+    editableCellRef.current = BLANK;
+    setEditableCell(BLANK);
   }
 
   const editCell = useCallback((row, key) => {
@@ -207,15 +183,40 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText }) => {
     }
   },[inputs, editCell, didWinGame, openModal, validWord, wonGame, lostGame])
 
+  const reinitialzeGame = useCallback(() => {
+    // Used for accessing the current row, namely, queue[0])
+    queue = QUEUE;
+    // Used for keeping track of next available position in current row
+    counter = COUNTER;
+    // the word to discover
+    target = target_function(WORD_LIST);
+    // hash map for checking presence of a given character in target word in constant time
+    target_map = TARGET_MAP_CONSTANT;
+    for(let char of target) {
+      // '1' means the character is in the string; not the count of the character
+      target_map[char] = 1;
+    }
+    // keeps track of number of placeholder characters in current row
+    placeHolderCounter = PLACEHOLDERCOUNTER;
+    // stores the user's processed words
+    attempts = ATTEMPTS;
+    setInputs(INPUTS_MATRIX);
+    setAssertion(ASSERTION_MATRIX);
+    setDynamicButtonSettings(buttonTheme);
+    clearEditable();
+    clearModal();
+    if(!page.current) page.current = document;
+    page.current.addEventListener('keydown', detectKeyDown, false);
+  },[clearModal, detectKeyDown])
+
   useEffect(() => {
     // ensures that use effect runs only once
     if(!page.current) {
       reinitialzeGame();
-      page.current = document;
-      page.current.addEventListener('keydown', detectKeyDown, false);
     }
-  },[detectKeyDown]);
+  },[reinitialzeGame]);
 
+  console.log("board was rendered")
   return (
     <div>
       {/* This is the board */}
@@ -229,7 +230,6 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText }) => {
                           <div 
                               onClick={(e) => {
                                 if(row_index === queue[0] && inputs[row_index][col_index] !== "") {
-                                  console.log(e.target)
                                   editableCellRef.current = cell_id;
                                   setEditableCell(cell_id) 
                                 } 
@@ -257,7 +257,6 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText }) => {
     </div>
   )
 }
-
 
 export default Board;
 

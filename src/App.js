@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import './App.css';
 import Board from './components/Board';
 import Modal from 'react-modal';
@@ -41,14 +41,20 @@ function App() {
   const [modalStatus, setModalStatus] = React.useState(modalCodes.missed);
   const [modalText, setModalText] = React.useState("")
 
-  const openModal = useCallback((text, time=3000) => {
+  const openModal = (text, time=3000) => {
     setModalText(text);
     setIsOpen(true);
     setTimeout(() => {
       setIsOpen(false);
       setModalText("");
     }, time)
-  },[])
+  }
+
+  const clearModal = () => {
+    setIsOpen(false);
+    setModalStatus(modalCodes.missed);
+    setModalText("");
+  }
 
   const newGame = (callback) => callback();
 
@@ -82,6 +88,7 @@ function App() {
         setIsOpen={setIsOpen}
         setModalStatus={setModalStatus}
         setModalText={setModalText}
+        clearModal={clearModal}
         newGame={newGame}
       />
     </div>
