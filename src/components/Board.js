@@ -1,26 +1,42 @@
 import React, {useCallback,useEffect,useRef,useState} from 'react';
+import { 
+  QUEUE, 
+  COUNTER, 
+  ALPHABET, 
+  target_function,
+  TARGET_MAP_CONSTANT, 
+  PLACEHOLDERCOUNTER, 
+  ATTEMPTS
+} from './gameSettings.js';
+import { WORD_LIST } from '../lib/wordList.js';
 import Keyboard from 'react-simple-keyboard';
 import "react-simple-keyboard/build/css/index.css";
-import {keyboardLayout,keyboardDisplay} from './keyboardConfig.js';
-import { WORD_LIST } from '../lib/wordList.js';
+import {keyboardLayout, keyboardDisplay} from './keyboardConfig.js';
 import { modalCodes } from '../App.js';
 
 //*********** Board variables ****************
-// Used for accessing the current row, namely, queue[0])
-let queue = [0,1,2,3,4,5];
-// Used for counting the characters in current row
-let counter = 0;
-let alphabet = {A:'A',B:'B',C:'C',D:'D',E:'E',F:'F',G:'G',H:'H',I:'I',J:'J',K:'K',L:'L',M:'M',N:'N',O:'O',P:'P',Q:'Q',R:'R',S:'S',T:'T',U:'U',V:'V',W:'W',X:'X',Y:'Y',Z:'Z'};
-let TARGET = WORD_LIST[Math.floor(Math.random()*(WORD_LIST.length))].toUpperCase();
-let TARGET_MAP = {};
-for(let char of TARGET) {
+let queue, counter, TARGET, TARGET_MAP, placeHolderCounter, attempts;
+
+const reinitialzeGame = () => {
+  // Used for accessing the current row, namely, queue[0])
+  queue = QUEUE;
+  // Used for keeping track of next available position in current row
+  counter = COUNTER;
+  // the word to discover
+  TARGET = target_function(WORD_LIST);
+  // hash map for checking presence of a given character in target word in constant time
+  TARGET_MAP = TARGET_MAP_CONSTANT;
+  for(let char of TARGET) {
     // '1' means the character is in the string; not the count of the character
     TARGET_MAP[char] = 1;
+  }
+  // keeps track of number of placeholder characters in current row
+  placeHolderCounter = PLACEHOLDERCOUNTER;
+  // stores the user's processed words
+  attempts = ATTEMPTS;
 }
-let placeHolderCounter = 0;
-// Stores the user's processed words
-const attempts = {};
-// Used as inputs in the assertion matrix below
+reinitialzeGame();
+
 const BLANK = "";
 const MISSED = "missed";
 const CLOSE = "close";
@@ -50,11 +66,10 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText}) => {
   // Used for setting color codes for keyboard keys
   const [dynamicButtonSettings, setDynamicButtonSettings] = useState(buttonTheme);
 
-
   const processWord= useCallback(async (row, word_array) => {
     let correct = 0;
     const steps = TARGET.length;
-    const step_delay = 400;
+    const step_delay = 500;
     // create a delayedSteps function, which runs a loop, each loop step taking a step_delay time to execute
     function delayedSteps(i) {
        setTimeout(function() {
@@ -103,12 +118,10 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText}) => {
   },[setModalText, setModalStatus, setIsOpen])
 
   const lostGame = useCallback(( ) => {
-    queue = [];
     setModalText(`Sorry, the word was ${TARGET}`);
     setModalStatus(modalCodes.lost);
     setIsOpen(true);
   },[setModalText, setModalStatus, setIsOpen])
-
 
   const clearEditable = () => {
     editableCellRef.current = "";
@@ -118,10 +131,10 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText}) => {
   const editCell = useCallback((row, key) => {
     console.log("waiting on edits");
     // If user input is a placeholder and editable cell currently has a letter, increase placeholder count
-    if(!alphabet[key] && inputs[row][editableCellRef.current[1]] !== "-") placeHolderCounter++;
+    if(!ALPHABET[key] && inputs[row][editableCellRef.current[1]] !== "-") placeHolderCounter++;
     // If user input is a letter and editable cell currently has a placeholder, decrease placeholder count
-    if(alphabet[key] && inputs[row][editableCellRef.current[1]] === "-" ) placeHolderCounter--;
-    setInputs([...inputs, inputs[row][editableCellRef.current[1]] = alphabet[key] ? key : "-"]);
+    if(ALPHABET[key] && inputs[row][editableCellRef.current[1]] === "-" ) placeHolderCounter--;
+    setInputs([...inputs, inputs[row][editableCellRef.current[1]] = ALPHABET[key] ? key : "-"]);
     clearEditable();
   },[inputs])
 
@@ -129,29 +142,25 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText}) => {
   const detectKeyDown = useCallback(async (e) => {
     // If no row to process, skip the function
     if(!queue.length) return;
-    // 'e.key' comes from typing on device keyborad; 'e' alone comes from typing (clicking) on page keyboard
+    // 'e.key' comes from typing on device keyboard; 'e' alone comes from typing (clicking) on page keyboard
     const key = e.key ? e.key.toUpperCase() : e;
     const row = queue[0];
     console.log(key)
     if(key === 'ENTER') {
       if(placeHolderCounter > 0) {
         openModal("Please remove placeholders");
-        console.log("Please remove placeholders")
         return;
       }
       if(counter < 5) {
         openModal("Not enough letters");
-        console.log("Not enough letters")
         return;
       }
       if(!validWord(row)) {
         openModal("That's not in our dictionary");
-        console.log("That's not in our dictionary");
         return;
       }
       if(attempts[inputs[row].join("")]) {
         openModal("You already used that word");
-        console.log("You already used that word");
         return;
       }
       // Deactivate user input while processing word
@@ -160,9 +169,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText}) => {
       queue[0] = undefined;
       // Remove editableCell selection if user had selected a cell before pressing Enter
       clearEditable();
-      // Stop code execution until 'processWord' is done (uses promises + setTimeout)
-      // const didWinGame = await processWord(row, inputs[row]);
-      // console.log(didWinGame)
+      // Stop code execution until 'didWindGame and processWord' is done (uses promises + setTimeout)
       if(await didWinGame(row, inputs[row])) {
         wonGame();
         return;
@@ -170,6 +177,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText}) => {
       // Game was not won; remove access to current row and proceed to next row
       queue.shift();
       counter = 0;
+      // If queue is empty, game is over
       if(!queue.length) {
         page.current.removeEventListener('keydown', detectKeyDown, false)
         lostGame();
@@ -184,14 +192,14 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText}) => {
         if(editableCellRef.current.length) clearEditable();
         return;
       }
-    } else if(alphabet[key] || key === " " || key === "SPACE") {
+    } else if(ALPHABET[key] || key === " " || key === "SPACE") {
       // If user had clicked on a non-empty cell in the current row, allow that cell to be editable with the user's last input
       if(editableCellRef.current.length) return editCell(row, key);
       if(counter > 4) return;
       setInputs([
         ...inputs, 
           inputs[row][counter] = (function(){
-            if(alphabet[key]) {
+            if(ALPHABET[key]) {
               return key;
             } else {
               if(placeHolderCounter < 5) placeHolderCounter++;
