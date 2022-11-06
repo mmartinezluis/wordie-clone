@@ -1,15 +1,8 @@
-import React, {
-    useCallback, 
-    useEffect, 
-    useRef, 
-    useState
-} from 'react';
+import React, {useCallback,useEffect,useRef,useState} from 'react';
 import Keyboard from 'react-simple-keyboard';
 import "react-simple-keyboard/build/css/index.css";
-import {
-  keyboardLayout, 
-  keyboardDisplay
-} from './keyboardConfig.js';
+import {keyboardLayout,keyboardDisplay} from './keyboardConfig.js';
+import { WORD_LIST } from '../lib/wordList.js';
 
 //*********** Board variables ****************
 // Used for accessing the current row, namely, queue[0])
@@ -17,9 +10,8 @@ let queue = [0,1,2,3,4,5];
 // Used for counting the characters in current row
 let counter = 0;
 let alphabet = {A:'A',B:'B',C:'C',D:'D',E:'E',F:'F',G:'G',H:'H',I:'I',J:'J',K:'K',L:'L',M:'M',N:'N',O:'O',P:'P',Q:'Q',R:'R',S:'S',T:'T',U:'U',V:'V',W:'W',X:'X',Y:'Y',Z:'Z'};
-// const dictionary = {TARGET: "TARGET"};
-const TARGET = "HELLO";
-const TARGET_MAP = {};
+let TARGET = WORD_LIST[Math.floor(Math.random()*(WORD_LIST.length))].toUpperCase();
+let TARGET_MAP = {};
 for(let char of TARGET) {
     // '1' means the character is in the string; not the count of the character
     TARGET_MAP[char] = 1;
@@ -42,7 +34,7 @@ const buttonTheme = [
 ]
 
     
-const Board = () => {
+const Board = ({openModal}) => {
   // Used to attach/dettach a keydown event listerner on the page
   const page = useRef(null);
   // User input characters matrix
@@ -61,7 +53,7 @@ const Board = () => {
   const processWord= useCallback(async (row, word_array) => {
     let correct = 0;
     const steps = TARGET.length;
-    const step_delay = 500;
+    const step_delay = 400;
     // create a delayedSteps function, which runs a loop, each loop step taking a step_delay time to execute
     function delayedSteps(i) {
        setTimeout(function() {
@@ -98,18 +90,15 @@ const Board = () => {
     return processWord(row, word_array);
   },[processWord])
 
-  function validWord(word) {
-    // if(!dictionary[word]) return false;
-    return true;
+  function validWord(row) {
+    return WORD_LIST.includes(inputs[row].join("").toLowerCase());
   }
 
-  function display() {
-
-  }
-
-  function lostGame() {
-
-  }
+  const lostGame = useCallback( () => {
+    openModal("The word was", TARGET);
+    console.log("The word was", TARGET);
+    page.current.removeEventListener('keydown', detectKeyDown, false)
+  },[])
 
   const clearEditable = () => {
     editableCellRef.current = "";
@@ -124,7 +113,6 @@ const Board = () => {
     if(alphabet[key] && inputs[row][editableCellRef.current[1]] === "-" ) placeHolderCounter--;
     setInputs([...inputs, inputs[row][editableCellRef.current[1]] = alphabet[key] ? key : "-"]);
     clearEditable();
-    return;
   },[inputs])
 
 
@@ -137,22 +125,22 @@ const Board = () => {
     console.log(key)
     if(key === 'ENTER') {
       if(placeHolderCounter > 0) {
-        display("Please remove placeholders");
+        openModal("Please remove placeholders");
         console.log("Please remove placeholders")
         return;
       }
       if(counter < 5) {
-        display("Not enough letters");
+        openModal("Not enough letters");
         console.log("Not enough letters")
         return;
       }
-      if(!validWord(key)) {
-        display("That's not in our dictionary");
+      if(!validWord(row)) {
+        openModal("That's not in our dictionary");
         console.log("That's not in our dictionary");
         return;
       }
       if(attempts[inputs[row].join("")]) {
-        display("You already used that word");
+        openModal("You already used that word");
         console.log("You already used that word");
         return;
       }
@@ -167,7 +155,7 @@ const Board = () => {
       console.log(didWinGame)
       if(didWinGame) {
         queue = [];
-        display("Congratulations!!!")
+        openModal("Congratulations!!!")
         console.log("Congratulations")
         return;
       } else page.current.addEventListener('keydown', detectKeyDown, false);
@@ -176,9 +164,6 @@ const Board = () => {
       counter = 0;
       if(!queue.length) {
         lostGame();
-        display("The word was", TARGET);
-        console.log("The word was", TARGET);
-        page.current.removeEventListener('keydown', detectKeyDown, false)
       }
     } else if(key === 'BACKSPACE') {
       if(counter > 0 && counter <= 5) {
@@ -206,7 +191,7 @@ const Board = () => {
       ]);
       counter += 1;
     }
-  },[inputs, editCell, processWord])
+  },[inputs, editCell, processWord, lostGame, openModal, validWord])
 
 
   useEffect(() => {
@@ -220,6 +205,8 @@ const Board = () => {
   
   return (
     <div>
+      GUESS: {TARGET}
+      {/* This is the board */}
       <div className='board'>
           {new Array(6).fill(0).map((row_el, row_index) => {
               return (
