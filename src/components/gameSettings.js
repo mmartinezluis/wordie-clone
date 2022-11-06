@@ -5,3 +5,11 @@ export const target_function = (word_list) => word_list[Math.floor(Math.random()
 export const TARGET_MAP_CONSTANT = {};
 export const PLACEHOLDERCOUNTER = 0;
 export const ATTEMPTS = {};
+// constants for assertion matrix
+export const BLANK = "";
+export const MISSED = "missed";
+export const CLOSE = "close";
+export const RIGHT = "right";
+// matrices 
+export const INPUTS_MATRIX = new Array(6).fill(0).map(el => new Array(5).fill(""));
+export const ASSERTION_MATRIX = new Array(6).fill(0).map(el => new Array(5).fill(BLANK));

@@ -1,4 +1,4 @@
-import React, {useCallback,useEffect,useRef,useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import { 
   QUEUE, 
   COUNTER, 
@@ -6,70 +6,67 @@ import {
   target_function,
   TARGET_MAP_CONSTANT, 
   PLACEHOLDERCOUNTER, 
-  ATTEMPTS
+  ATTEMPTS,
+  BLANK,
+  MISSED,
+  CLOSE,
+  RIGHT,
+  INPUTS_MATRIX,
+  ASSERTION_MATRIX
 } from './gameSettings.js';
 import { WORD_LIST } from '../lib/wordList.js';
 import Keyboard from 'react-simple-keyboard';
 import "react-simple-keyboard/build/css/index.css";
-import {keyboardLayout, keyboardDisplay} from './keyboardConfig.js';
+import {keyboardLayout, keyboardDisplay, buttonTheme} from './keyboardConfig.js';
 import { modalCodes } from '../App.js';
 
 //*********** Board variables ****************
 let queue, counter, TARGET, TARGET_MAP, placeHolderCounter, attempts;
 
-export const reinitialzeGame = () => {
-  // Used for accessing the current row, namely, queue[0])
-  queue = QUEUE;
-  // Used for keeping track of next available position in current row
-  counter = COUNTER;
-  // the word to discover
-  TARGET = target_function(WORD_LIST);
-  // hash map for checking presence of a given character in target word in constant time
-  TARGET_MAP = TARGET_MAP_CONSTANT;
-  for(let char of TARGET) {
-    // '1' means the character is in the string; not the count of the character
-    TARGET_MAP[char] = 1;
-  }
-  // keeps track of number of placeholder characters in current row
-  placeHolderCounter = PLACEHOLDERCOUNTER;
-  // stores the user's processed words
-  attempts = ATTEMPTS;
-}
-reinitialzeGame();
 
-const BLANK = "";
-const MISSED = "missed";
-const CLOSE = "close";
-const RIGHT = "right";
-
-//*********** Keyboard variables ****************
-// Keyboard dynamic settings
-const buttonTheme = [
-  {class: MISSED, buttons: " "},
-  {class: CLOSE, buttons: " "},
-  {class: RIGHT, buttons: " "}
-]
-
-    
 const Board = ({ openModal, setIsOpen, setModalStatus, setModalText }) => {
   // Used to attach/dettach a keydown event listerner on the page
   const page = useRef(null);
   // User input characters matrix
-  const [inputs, setInputs] = useState(new Array(6).fill(0).map(el => new Array(5).fill("")));
+  const [inputs, setInputs] = useState(INPUTS_MATRIX);
   // Color codes matrix (assertion matrix) for processed words
-  const [assertion, setAssertion] = useState(new Array(6).fill(0).map(el => new Array(5).fill(BLANK)));
+  const [assertion, setAssertion] = useState(ASSERTION_MATRIX);
   // Two variables are needed to successfully toggle the "glow" class name on a cell (editableCell variable)
   // and to read the id of the toggled cell in the detectKeyDown function (editableCellRef variable;
   // editableCell variable is an empty string in detectKeyDown function even after setting it to an id string on the cell's click event)
-  const [editableCell, setEditableCell] = useState("");
-  const editableCellRef = useRef("");
+  const [editableCell, setEditableCell] = useState(BLANK);
+  const editableCellRef = useRef(BLANK);
   // Used for setting color codes for keyboard keys
   const [dynamicButtonSettings, setDynamicButtonSettings] = useState(buttonTheme);
+
+  const reinitialzeGame = () => {
+    // Used for accessing the current row, namely, queue[0])
+    queue = QUEUE;
+    // Used for keeping track of next available position in current row
+    counter = COUNTER;
+    // the word to discover
+    TARGET = target_function(WORD_LIST);
+    // hash map for checking presence of a given character in target word in constant time
+    TARGET_MAP = TARGET_MAP_CONSTANT;
+    for(let char of TARGET) {
+      // '1' means the character is in the string; not the count of the character
+      TARGET_MAP[char] = 1;
+    }
+    // keeps track of number of placeholder characters in current row
+    placeHolderCounter = PLACEHOLDERCOUNTER;
+    // stores the user's processed words
+    attempts = ATTEMPTS;
+    setInputs(INPUTS_MATRIX);
+    setAssertion(ASSERTION_MATRIX);
+    setEditableCell(BLANK);
+    editableCellRef.current = BLANK;
+    setDynamicButtonSettings(buttonTheme);
+  }
 
   const processWord= useCallback(async (row, word_array) => {
     let correct = 0;
     const steps = TARGET.length;
-    const step_delay = 500;
+    const step_delay = 400;
     // create a delayedSteps function, which runs a loop, each loop step taking a step_delay time to execute
     function delayedSteps(i) {
        setTimeout(function() {
@@ -137,7 +134,6 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText }) => {
     setInputs([...inputs, inputs[row][editableCellRef.current[1]] = ALPHABET[key] ? key : "-"]);
     clearEditable();
   },[inputs])
-
 
   const detectKeyDown = useCallback(async (e) => {
     // If no row to process, skip the function
@@ -211,16 +207,15 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText }) => {
     }
   },[inputs, editCell, didWinGame, openModal, validWord, wonGame, lostGame])
 
-
   useEffect(() => {
     // ensures that use effect runs only once
     if(!page.current) {
+      reinitialzeGame();
       page.current = document;
       page.current.addEventListener('keydown', detectKeyDown, false);
     }
   },[detectKeyDown]);
 
-  
   return (
     <div>
       {/* This is the board */}

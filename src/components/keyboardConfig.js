@@ -1,3 +1,5 @@
+import { CLOSE, MISSED, RIGHT } from "./gameSettings";
+
 const keyboardConfig = {
     keyboardLayout: { 
         default: [
@@ -11,7 +13,12 @@ const keyboardConfig = {
         "ENTER": "Enter",
         "SPACE": "Placeholder",
         "BACKSPACE": "⌫"
-    }
+    },
+    buttonTheme: [
+        {class: MISSED, buttons: " "},
+        {class: CLOSE, buttons: " "},
+        {class: RIGHT, buttons: " "}
+    ]
 }
 
 export const {
