@@ -21,14 +21,23 @@ import {keyboardLayout, keyboardDisplay, buttonTheme} from './keyboardConfig.js'
 import { modalCodes } from '../App.js';
 
 //*********** Board stateless variables ****************
-let queue, counter, target, target_map, placeHolderCounter, attempts;
+let queue, 
+    counter, 
+    target, 
+    target_map, 
+    placeHolderCounter, 
+    attempts,
+    inputs
 
 
 const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal }) => {
   // Used to attach/dettach a keydown event listerner on the page
   const page = useRef(null);
+  const boardRef = useRef(null);
+  // const inputs = useRef(null);
   // User input characters matrix
-  const [inputs, setInputs] = useState(INPUTS_MATRIX);
+  // const [inputs, setInputs] = useState(new Array(6).fill(0).map(el => new Array(5).fill("")));
+  const [inputsHandle, setInputsHandle] = useState(false);
   // Color codes matrix (assertion matrix) for processed words
   const [assertion, setAssertion] = useState(ASSERTION_MATRIX);
   // Two variables are needed to successfully toggle the "glow" class name on a cell (editableCell variable)
@@ -75,7 +84,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
           return resolve(0);
         }, steps*step_delay + 500)
     })
-  },[assertion, dynamicButtonSettings, inputs])
+  },[assertion, dynamicButtonSettings])
 
   const didWinGame = useCallback(async (row, word_array) => {
     return processWord(row, word_array);
@@ -83,7 +92,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
 
   const validWord = useCallback((row) => {
     return WORD_LIST.includes(inputs[row].join("").toLowerCase());
-  },[inputs])
+  },[])
 
   const wonGame = useCallback(() => {
     queue = [];
@@ -109,11 +118,12 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
     if(!ALPHABET[key] && inputs[row][editableCellRef.current[1]] !== "-") placeHolderCounter++;
     // If user input is a letter and editable cell currently has a placeholder, decrease placeholder count
     if(ALPHABET[key] && inputs[row][editableCellRef.current[1]] === "-" ) placeHolderCounter--;
-    setInputs([...inputs, inputs[row][editableCellRef.current[1]] = ALPHABET[key] ? key : "-"]);
+    inputs[row][editableCellRef.current[1]] = ALPHABET[key] ? key : "-";
     clearEditable();
-  },[inputs])
+  },[])
 
   const detectKeyDown = useCallback(async (e) => {
+    console.log(inputs, queue, inputsHandle)
     // If no row to process, skip the function
     if(!queue.length) return;
     // 'e.key' comes from typing on device keyboard; 'e' alone comes from typing (clicking) on page keyboard
@@ -161,7 +171,8 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
       if(counter > 0 && counter <= 5) {
         counter -= 1;
         if(inputs[row][counter] === "-") placeHolderCounter--;
-        setInputs([...inputs, inputs[row][counter] = ""]);
+        inputs[row][counter] = "";
+        setInputsHandle((prev) => !prev);
         // If user pressed backspace after clicking on an editable cell, deactivate the editable cell
         if(editableCellRef.current.length) clearEditable();
         return;
@@ -170,24 +181,21 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
       // If user had clicked on a non-empty cell in the current row, edit that cell with the user's last input
       if(editableCellRef.current.length) return editCell(row, key);
       if(counter > 4) return;
-      setInputs([
-        ...inputs, 
-          inputs[row][counter] = (function(){
-            if(ALPHABET[key]) {
-              return key;
-            } else {
-              if(placeHolderCounter < 5) placeHolderCounter++;
-              return "-";
-            }
-          })()
-      ]);
+      if(ALPHABET[key]) {
+        inputs[row][counter] = key;  
+      } else {
+        if(placeHolderCounter < 5) placeHolderCounter++;
+        inputs[row][counter] = "-";
+      }
+      setInputsHandle((prev) => !prev);
       counter += 1;
     }
-  },[inputs, editCell, didWinGame, openModal, validWord, wonGame, lostGame])
+  },[editCell, didWinGame, openModal, validWord, wonGame, lostGame, inputsHandle])
 
   const reinitialzeGame = useCallback(() => {
+    console.log("inside reinitializer")
     // Used for accessing the current row, namely, queue[0])
-    queue = QUEUE;
+    queue = [...QUEUE];
     // Used for keeping track of next available position in current row
     counter = COUNTER;
     // the word to discover
@@ -201,39 +209,56 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
     // keeps track of number of placeholder characters in current row
     placeHolderCounter = PLACEHOLDERCOUNTER;
     // stores the user's processed words
-    attempts = ATTEMPTS;
-    // board state variables
-    setInputs(INPUTS_MATRIX);
-    setAssertion(ASSERTION_MATRIX);
+    attempts = {...ATTEMPTS};
+    inputs = new Array(6).fill(0).map(el => new Array(5).fill(""));
+    setAssertion(new Array(6).fill(0).map(el => new Array(5).fill(BLANK)));
     // keyboard state variable; manages keyboard keys color codes
-    setDynamicButtonSettings(buttonTheme);
+    setDynamicButtonSettings(() => {
+      return [...buttonTheme]
+    });
     // reinitializes the editable cell
     clearEditable();
     // reinitializes the modal
     clearModal();
     // this line runs one time only: when page loads
-    if(!page.current) page.current = document;
+    // console.log(queue, counter, target, placeHolderCounter, attempts, page.current)
+    // if(!page.current) page.current = document;
+    // page.current = null;
+    // page.current = document;
     // if user re-starts the game before finishing the game, makes sure event listener is not added twice to the page
-    page.current.removeEventListener('keydown', detectKeyDown, false);
-    // enable user's device keyboard to type on board
-    page.current.addEventListener('keydown', detectKeyDown, false);
-  },[clearModal, detectKeyDown])
+    // page.current.removeEventListener('keydown', detectKeyDown, false);
+    // // enable user's device keyboard to type on board
+    // page.current.addEventListener('keydown', detectKeyDown, false);
+  },[clearModal])
 
   useEffect(() => {
     // ensures that code inside conditional runs only once, on page load
     if(!page.current) {
       reinitialzeGame();
+      page.current = document;
+      page.current.addEventListener('keydown', detectKeyDown, false);
     }
-  },[reinitialzeGame]);
+  // },[reinitialzeGame, detectKeyDown]);
+  },[]);
 
   console.log("board was rendered")
+  if(!page.current) return <div></div>
   return (
     <div>
+      {/* This button is placed in the app header using CSS */}
       <div className='new_game'>
-        <button onClick={() => ""}>New Game</button>
+        <button onClick={() => {
+          reinitialzeGame();
+          setInputsHandle((prev) => !prev)
+          boardRef.current.focus();
+          console.log(inputs, assertion, dynamicButtonSettings,editableCell, editableCellRef.current, queue, counter, target, placeHolderCounter, attempts, page.current)
+          }}
+        >
+          New Game
+      </button>
       </div>
-      {/* This is the board */}
-      <div className='board'>
+
+      <div ref={boardRef} className='board'>
           {new Array(6).fill(0).map((row_el, row_index) => {
               return (
               <div key={row_index} className='row'>

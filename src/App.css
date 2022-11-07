@@ -158,21 +158,22 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 .glow {
-  border: #1565c0 solid 3px;
+  border: #2962ff solid 3px;
+  /* border-color: #1565c0; */
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .glow {
-    animation: cell-glow infinite 3s linear;
+    animation: cell-glow infinite 2s ease-in;
   }
 }
 
 @keyframes cell-glow {
   50% {
-    border-color: #00e5ff;
+    border-color: #4dd0e1;
   }
   100% {
-    border-color: #1565c0;
+    border-color: #2962ff;
   }
 }
 
