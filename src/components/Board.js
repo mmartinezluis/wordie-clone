@@ -233,7 +233,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
     // reinitializes the editable cell
     clearEditable();
     // reinitializes the modal
-    clearModal();
+    // clearModal();
     setInputsHandle((prev) => !prev);
   },[clearModal,detectKeyDown])
 

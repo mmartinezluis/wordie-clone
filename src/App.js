@@ -15,14 +15,15 @@ const modalCustomStyles = {
     color: 'rgb(51, 51, 51)',
     overflow: 'unset',
     // width: '100%',
-    position: 'absoulte'
+    position: 'absoulte',
+    whiteSpace: 'nowrap'
   },
   overlay: {
     backgroundColor: 'transparent',
-    maxWidth: '300px',
-    minWidth: '200px',
+    maxWidth: '400px',
+    minWidth: '400px',
     height: '4%',
-    translate: '-50% 0%',
+    translate: '-50% 80%',
     zIndex: '100',
     inset: '5% 0% 0% 50%',
     position: 'fixed'
@@ -39,9 +40,9 @@ Modal.setAppElement('#root');
 
 function App() {
 
-  const [modalIsOpen, setIsOpen] = React.useState(false);
+  const [modalIsOpen, setIsOpen] = React.useState(true);
   const [modalStatus, setModalStatus] = React.useState(modalCodes.missed);
-  const [modalText, setModalText] = React.useState("")
+  const [modalText, setModalText] = React.useState("Congratulations!!! You got the word, ${target}`);")
 
   const openModal = (text, time=3000) => {
     setModalText(text);

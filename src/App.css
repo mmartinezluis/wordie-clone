@@ -13,6 +13,12 @@
   }
 }
 
+@media screen and (max-width: 460px) {
+  .ReactModal__Overlay {
+    translate: -50% 250% !important;
+  }
+}
+
 .App-header {
   padding: 20px 10px 10px;
   border-bottom: gray 1px solid;
@@ -146,7 +152,6 @@ h1,h2,h3,h4,h5,h6 {
 .cell.close,
 .simple-keyboard.hg-layout-default .hg-button.close {
   color: white;
-  /* background-color: #f7da21; */
   background-color: #ffd600;
   transition: 0.7s;
 }
@@ -159,12 +164,11 @@ h1,h2,h3,h4,h5,h6 {
 
 .glow {
   border: #2962ff solid 3px;
-  /* border-color: #1565c0; */
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .glow {
-    animation: cell-glow infinite 2s ease-in;
+    animation: cell-glow infinite 1.5s ease-in;
   }
 }
 
