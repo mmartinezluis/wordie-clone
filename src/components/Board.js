@@ -133,9 +133,9 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
   const detectKeyDown = useCallback(async (e) => {
     console.log(inputs, queue, inputsHandle)
     console.log('current target', target, "\ntarget map is", target_map);
-    // If no row to process, skip the function
-    // if(!queue.length) return;
+    // If no row to process, skip the function; this happens when a word is being processed or when user wins or loses game
     if(queue[0] === undefined) return;
+    // if(queue[0] === undefined) return;
     // 'e.key' comes from typing on user's device keyboard; 'e' alone comes from typing (clicking) on page keyboard
     const key = e.key ? e.key.toUpperCase() : e;
     const row = queue[0];
@@ -176,7 +176,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
       counter = 0;
       // If queue is empty, game is over
       if(!queue.length) {
-        page.current.removeEventListener('keydown', detectKeyDown, true)
+        // page.current.removeEventListener('keydown', detectKeyDown, true)
         lostGame();
         return;
       }
@@ -208,7 +208,10 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
   const reinitialzeGame = useCallback(() => {
     // if user wins or loses, the queue will be empty and the board will not be accessible; re-enable the board and keyboard
     // if user re-starts the game before finishing game, event listener will be active, hence there is no need to add event listener in this case 
-    // if(queue && !queue.length) page.current.addEventListener('keydown', detectKeyDown, true);
+    // if(queue && !queue.length) {
+    //   page.current.removeEventListener('keydown', detectKeyDown, true)
+    //   page.current.addEventListener('keydown', detectKeyDown, true);
+    // } 
     // Used for accessing the current row, namely, queue[0])
     queue = [...QUEUE];
     // Used for keeping track of next available position in current row
@@ -236,6 +239,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
     // reinitializes the modal
     clearModal();
     setInputsHandle((prev) => !prev);
+    boardRef.current && boardRef.current.focus();
   },[clearModal])
 
   useEffect(() => {
@@ -255,14 +259,13 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
       <div className='new_game'>
         <button onClick={() => {
             reinitialzeGame();
-            // boardRef.current.focus();
           }}
         >
           New Game
         </button>
       </div>
       {/* This is the board */}
-      <div ref={boardRef} className='board'>
+      <div ref={boardRef} className='board' tabIndex={-1}>
           {new Array(6).fill(0).map((row_el, row_index) => {
               return (
               <div key={row_index} className='row'>
@@ -294,12 +297,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
         layoutName="default"
         display={keyboardDisplay}
         buttonTheme={[...dynamicButtonSettings.values()]}
-        onKeyPress={(button) => {
-          detectKeyDown(button)
-          if(button === "ENTER") {
-            page.current.removeEventListener('keydown', detectKeyDown, true);
-          }
-        }}
+        onKeyPress={detectKeyDown}
       />
     </div>
   )

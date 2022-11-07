@@ -98,6 +98,10 @@ h1,h2,h3,h4,h5,h6 {
   align-items: center;
 }
 
+.board:focus-visible {
+  outline:0px;
+}
+
 .new_game__fake button,
 .new_game button {
   color: white;
