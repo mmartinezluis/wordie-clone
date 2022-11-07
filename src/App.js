@@ -40,9 +40,9 @@ Modal.setAppElement('#root');
 
 function App() {
 
-  const [modalIsOpen, setIsOpen] = React.useState(true);
+  const [modalIsOpen, setIsOpen] = React.useState(false);
   const [modalStatus, setModalStatus] = React.useState(modalCodes.missed);
-  const [modalText, setModalText] = React.useState("Congratulations!!! You got the word, ${target}`);")
+  const [modalText, setModalText] = React.useState("")
 
   const openModal = (text, time=3000) => {
     setModalText(text);
