@@ -124,6 +124,7 @@ h1,h2,h3,h4,h5,h6 {
 .row {
   display: flex;
 }
+
 .cell {
   border: black solid 1.5px; 
   width: 50px; 
@@ -157,10 +158,23 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 .glow {
-  border: blue solid 3px !important;
-  transform: 0.5s;
+  border: #1565c0 solid 3px;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .glow {
+    animation: cell-glow infinite 3s linear;
+  }
+}
+
+@keyframes cell-glow {
+  50% {
+    border-color: #00e5ff;
+  }
+  100% {
+    border-color: #1565c0;
+  }
+}
 
 .simple-keyboard {
   max-width: 500px;
