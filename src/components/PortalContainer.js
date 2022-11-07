@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 const PortalContainer = ({ children }) => {
-    
+
     const [isShown, setIsShown] = useState(false);
 
     const showPortal = () => {
@@ -23,7 +23,7 @@ const PortalContainer = ({ children }) => {
 
     const onClickOutside = (event) => {
         if(event.target.tagName !== "ASIDE") return
-        closeForm();
+        closePortal();
     };
 
     const toggleScrollLock = () => {
@@ -48,9 +48,9 @@ const PortalContainer = ({ children }) => {
         >
             <div className="portal-area" >
                 <button
-                    aria-label="Close Form"
-                    aria-labelledby="close-form"
-                    className="_form-close"
+                    aria-label="Close portal"
+                    aria-labelledby="close-portal"
+                    className="_portal-close"
                     onClick={closePortal}
                 >
                     <span id="close-portal" className="_hide-visual">
@@ -65,7 +65,7 @@ const PortalContainer = ({ children }) => {
                 </div>
             </div>
         </aside>,
-        document.querySelector('.root')
+        document.querySelector('#root')
     );
 }
 

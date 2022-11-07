@@ -4,6 +4,7 @@ import Board from './components/Board';
 import Modal from 'react-modal';
 // import logo from './logo.svg';
 import help_icon from './help-svgrepo-com.svg';
+import PortalContainer from './components/PortalContainer';
 
 
 const modalCustomStyles = {
@@ -100,6 +101,57 @@ function App() {
         clearModal={clearModal}
         newGame={newGame}
       />
+      <PortalContainer>
+      
+            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+            THIS IS A LONG TEXT AND A CELL  
+      </PortalContainer>
     </div>
   );
 }
