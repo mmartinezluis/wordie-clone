@@ -14,38 +14,57 @@
 }
 
 .App-header {
-  /* background-color: #282c34; */
   padding: 20px 10px 10px;
   border-bottom: gray 1px solid;
   box-shadow: darkgray;
-  /* min-height: 100vh; */
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  /* align-items: center; */
-  /* justify-content: flex-start; */
-  /* font-size: calc(10px + 2vmin); */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   margin-bottom: 35px;
-  /* color: white; */
 }
 
-.header--title {
+.header__filler,
+.header__buttons {
+  width: 250px;
+}
+
+.header__title {
   text-align: center;
-}
-.header--filler {
-}
-.header--new_game button {
-  color: white;
-  font-weight: 500;
-  background-color: #455a64;
-  /* background-color: #80d8ff; */
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 5px;
-  border: none;
+  flex-grow: 1;
+  white-space: nowrap;
 }
 
-h1,h2,h3,h4,h5,h6 {
-  margin: 0px;
+@media screen and (max-width: 700px) {
+  .header__filler{
+    width: 30px !important;
+  }
+  .header__title {
+    text-align: left;
+  }
+}
+
+@media screen and (max-width: 460px) {
+  .App-header {
+    flex-direction: column;
+    margin-bottom: 0;
+  }
+  .header__title {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .header__buttons {
+    justify-content: center;
+  }
+}
+
+.header__buttons {
+  display: flex;
+  align-items: center;
+}
+
+.header__buttons :is(img, .new_game, .about) {
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .App-link {
@@ -61,12 +80,45 @@ h1,h2,h3,h4,h5,h6 {
   }
 }
 
+h1,h2,h3,h4,h5,h6 {
+  margin: 0px;
+}
+
 .board {
   font-size: 32px;
   font-weight: 700;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.new_game__fake button,
+.new_game button {
+  color: white;
+  font-weight: 500;
+  background-color: #455a64;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: none;
+}
+.new_game__fake button {
+  white-space: nowrap;
+}
+
+.new_game {
+  position: absolute;
+  right: 0;
+  top: 0;
+  translate: -117px 20.5px;
+}
+
+@media screen and (max-width: 460px) {
+  .new_game {
+    translate: -5px -43px;
+    display: inline-flex;
+    position: static;
+  }
 }
 
 .row {
@@ -98,11 +150,12 @@ h1,h2,h3,h4,h5,h6 {
   transition: 0.7s;
 }
 .cell.right,
-.simple-keyboard.hg-layout-default  .hg-button.right {
+.simple-keyboard.hg-layout-default .hg-button.right {
   color: white;
   background-color:green;
   transition: 0.7s;
 }
+
 .glow {
   border: blue solid 3px !important;
   transform: 0.5s;

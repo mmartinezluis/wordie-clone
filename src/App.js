@@ -3,6 +3,8 @@ import './App.css';
 import Board from './components/Board';
 import Modal from 'react-modal';
 // import logo from './logo.svg';
+import help_icon from './help-svgrepo-com.svg';
+
 
 const modalCustomStyles = {
   content: {
@@ -75,9 +77,18 @@ function App() {
         </div>      
       </Modal>
       <header className="App-header">
-        <div className='header--filler'></div>
-        <div className='header--title'>
+        <div className='header__filler'></div>
+        <div className='header__title'>
           <h2>Wordle Clone</h2>
+        </div>
+        <div className='header__buttons'>
+          <img src={help_icon} className="" alt="help icon" />
+          <div className='new_game__fake'>
+            {/* This is a dummy button; the true button is placed on top of this */}
+            {/* button using CSS; the true button belongs to the Board component */}
+            <button style={{visibility: 'hidden'}}>New Game</button>
+          </div>
+          <div className='about'>About</div>
         </div>
       </header>
       <Board 
