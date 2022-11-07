@@ -17,7 +17,7 @@ import {
 import { WORD_LIST } from '../lib/wordList.js';
 import Keyboard from 'react-simple-keyboard';
 import "react-simple-keyboard/build/css/index.css";
-import {keyboardLayout, keyboardDisplay, buttonTheme, buttonTheme_function} from './keyboardConfig.js';
+import {keyboardLayout, keyboardDisplay, buttonTheme_function} from './keyboardConfig.js';
 import { modalCodes } from '../App.js';
 
 //*********** Board stateless variables ****************
@@ -29,28 +29,22 @@ let queue,
     attempts,
     inputs,
     assertion
-    // dynamicButtonSettings
 
-let dynamicButtonSettings = buttonTheme;
+//*********** Keyboard stateless variable ****************
+let dynamicButtonSettings;
 
 const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal }) => {
   // Used to attach/dettach a keydown event listerner on the page
   const page = useRef(null);
   const boardRef = useRef(null);
-  // const inputs = useRef(null);
-  // User input characters matrix
-  // const [inputs, setInputs] = useState(new Array(6).fill(0).map(el => new Array(5).fill("")));
+  // Takes care of re-redering the component when stateless variables are changed
   const [inputsHandle, setInputsHandle] = useState(false);
-  // Color codes matrix (assertion matrix) for processed words
-  // const [assertion, setAssertion] = useState(ASSERTION_MATRIX);
   // Two variables are needed to successfully toggle the "glow" class name on a cell (editableCell variable)
   // and to read the id of the toggled cell in the detectKeyDown function (editableCellRef variable;
   // editableCell variable is an empty string in detectKeyDown function even after setting it to an id string on the cell's click event)
   const [editableCell, setEditableCell] = useState(BLANK);
   const editableCellRef = useRef(BLANK);
-  // Used for setting color codes for page keyboard keys
-  // const [dynamicButtonSettings, setDynamicButtonSettings] = useState(new Map([ ['config', buttonTheme]]));
-
+  
   const processWord= useCallback(async (row, word_array) => {
     let correct = 0;
     const steps = target.length;
@@ -62,11 +56,9 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
         if(i--) {
           // this logic adds background color to current row cells one character at a time
           if(!target_map[word_array[index]]){ 
-            // setAssertion([...assertion, assertion[row][index] = MISSED ]);
             assertion[row][index] = MISSED;
             setInputsHandle((prev) => !prev)
           } else if(word_array[index] === target[index]) {
-            // setAssertion([...assertion, assertion[row][index] = RIGHT]);
             assertion[row][index] = RIGHT;
             correct++;
             setInputsHandle((prev) => !prev)
@@ -84,25 +76,16 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
         delayedSteps(steps);
         // fires after the step*step_delay time product 
         setTimeout(() => {  
-          // let temp
-          // this loops adds background color to the page's keyboard keys
-          // for(let [index,code] of assertion[row].entries()) setDynamicButtonSettings([...dynamicButtonSettings, dynamicButtonSettings[temp = code === "missed" ? 0 : code === "close" ? 1 : 2].buttons= inputs[row][index] + " " + dynamicButtonSettings[temp].buttons.trim() ]);
+          // this loop adds background color to the page's keyboard keys
+          const clone = new Map(dynamicButtonSettings);
           for(let [index,code] of assertion[row].entries()) {
-            // setDynamicButtonSettings([...dynamicButtonSettings, dynamicButtonSettings[temp = code === "missed" ? 0 : code === "close" ? 1 : 2].buttons= inputs[row][index] + " " + dynamicButtonSettings[temp].buttons.trim() ]);
-            // const temp = code === "missed" ? 0 : code === "close" ? 1 : 2;
-            // console.log(dynamicButtonSettings)
-            // debugger
-            const clone = new Map(dynamicButtonSettings);
+            
             clone.set(code, {
               ...clone.get(code), 
-                buttons: inputs[row][index] + " " + clone.get(code).buttons.trim()
+                buttons: inputs[row][index] + " " + clone.get(code).buttons.trim().slice()
             })
-            dynamicButtonSettings = clone;
-            // clone.set('config', [...clone.get('config'))
-            // setDynamicButtonSettings(clone);
-            // console.log(dynamicButtonSettings)
-            
           }
+          dynamicButtonSettings = clone;
           setInputsHandle((prev) => !prev);
           if(correct === target.length) return resolve(1);
           attempts[word_array.join("")] = 1;
@@ -149,6 +132,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
 
   const detectKeyDown = useCallback(async (e) => {
     console.log(inputs, queue, inputsHandle)
+    console.log('current target', target, "\ntarget map is", target_map);
     // If no row to process, skip the function
     if(!queue.length) return;
     // 'e.key' comes from typing on device keyboard; 'e' alone comes from typing (clicking) on page keyboard
@@ -219,7 +203,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
 
   const reinitialzeGame = useCallback(() => {
     // if user wins or loses, the queue will be empty and the board will not be accessible; re-enable the board and keyboard
-    // if user re-starts the game before finishing game, event listener will be active, hence there is not need to add evetn listener in this case 
+    // if user re-starts the game before finishing game, event listener will be active, hence there is no need to add event listener in this case 
     if(queue && !queue.length) page.current.addEventListener('keydown', detectKeyDown, false);
     // Used for accessing the current row, namely, queue[0])
     queue = [...QUEUE];
@@ -228,7 +212,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
     // the word to discover
     target = target_function(WORD_LIST);
     // hash map for checking presence of a given character in target word in constant time
-    target_map = TARGET_MAP_CONSTANT;
+    target_map = {...TARGET_MAP_CONSTANT};
     for(let char of target) {
       // '1' means the character is in the string; not the count of the character
       target_map[char] = 1;
@@ -237,18 +221,17 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
     placeHolderCounter = PLACEHOLDERCOUNTER;
     // stores the user's processed words
     attempts = {...ATTEMPTS};
-    // inputs matrix
+    // User inputs matrix
     inputs = inputs_matrix();
-    // assertion matrix
+    // Color codes matrix (assertion matrix) for processed words
     assertion = assertion_matrix();
-    // keyboard state variable; manages keyboard keys color codes
-    // setDynamicButtonSettings(new Map(buttonTheme));
+    // Used for setting color codes for page keyboard keys
     dynamicButtonSettings = buttonTheme_function();
     // reinitializes the editable cell
     clearEditable();
     // reinitializes the modal
     clearModal();
-    setInputsHandle((prev) => !prev)
+    setInputsHandle((prev) => !prev);
   },[clearModal,detectKeyDown])
 
   useEffect(() => {
@@ -267,17 +250,15 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
       {/* This button is placed in the app header using CSS */}
       <div className='new_game'>
         <button onClick={() => {
-          reinitialzeGame();
-          // setInputsHandle((prev) => !prev)
-          boardRef.current.focus();
-          console.log(inputs, assertion, dynamicButtonSettings,editableCell, editableCellRef.current, queue, counter, target, placeHolderCounter, attempts, page.current)
+            reinitialzeGame();
+            boardRef.current.focus();
           }}
         >
           New Game
-      </button>
+        </button>
       </div>
-
-      <div ref={boardRef} className='board'>
+      {/* This is the board */}
+      <div ref={boardRef} autoFocus className='board'>
           {new Array(6).fill(0).map((row_el, row_index) => {
               return (
               <div key={row_index} className='row'>
