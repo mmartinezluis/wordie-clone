@@ -1,14 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
+import closeIcon from '../close-svgrepo-com.svg';
 
-const PortalContainer = ({ children }) => {
+const PortalContainer = ({ children, toggle }) => {
 
     const [isShown, setIsShown] = useState(false);
 
-    const showPortal = () => {
-        setIsShown(true) 
+    const showPortal = useCallback(() => {
+        setIsShown(true); 
         toggleScrollLock();
-    };
+    },[])
 
     const closePortal = () => {
         setIsShown(false);
@@ -32,9 +33,11 @@ const PortalContainer = ({ children }) => {
 
     const myRef = useRef(null);
     useEffect(() => {
-        myRef.current.focus();
-    },[])
+        myRef.current && myRef.current.focus();
+        if(toggle) showPortal();
+    },[toggle, showPortal])
 
+    if(!isShown) return null;
     return ReactDOM.createPortal(
         <aside
             tag="aside"
@@ -56,12 +59,17 @@ const PortalContainer = ({ children }) => {
                     <span id="close-portal" className="_hide-visual">
                         Close
                     </span>
-                    <svg className="_portal-close-icon" viewBox="0 0 40 40">
+                    {/* <svg className="_portal-close-icon" viewBox="0 0 40 40">
                         <path d="M 10,10 L 30,30 M 30,10 L 10,30" />
-                    </svg>
+                    </svg> */}
+                    <img src={closeIcon} className="_portal-close-icon" alt="close icon" />
                 </button>
                 <div className="portal-body">
-                    { children }
+                    <div style={{textAlign: 'center', lineHeight: '1.4',}}>
+                        <div style={{padding: '0 10px 20px'}}>
+                            { children }
+                        </div>
+                    </div>
                 </div>
             </div>
         </aside>,
