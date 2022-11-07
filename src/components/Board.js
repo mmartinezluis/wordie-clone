@@ -17,7 +17,7 @@ import {
 import { WORD_LIST } from '../lib/wordList.js';
 import Keyboard from 'react-simple-keyboard';
 import "react-simple-keyboard/build/css/index.css";
-import {keyboardLayout, keyboardDisplay, buttonTheme} from './keyboardConfig.js';
+import {keyboardLayout, keyboardDisplay, buttonTheme, buttonTheme_function} from './keyboardConfig.js';
 import { modalCodes } from '../App.js';
 
 //*********** Board stateless variables ****************
@@ -29,7 +29,9 @@ let queue,
     attempts,
     inputs,
     assertion
+    // dynamicButtonSettings
 
+let dynamicButtonSettings = buttonTheme;
 
 const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal }) => {
   // Used to attach/dettach a keydown event listerner on the page
@@ -47,7 +49,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
   const [editableCell, setEditableCell] = useState(BLANK);
   const editableCellRef = useRef(BLANK);
   // Used for setting color codes for page keyboard keys
-  const [dynamicButtonSettings, setDynamicButtonSettings] = useState(buttonTheme);
+  // const [dynamicButtonSettings, setDynamicButtonSettings] = useState(new Map([ ['config', buttonTheme]]));
 
   const processWord= useCallback(async (row, word_array) => {
     let correct = 0;
@@ -82,16 +84,32 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
         delayedSteps(steps);
         // fires after the step*step_delay time product 
         setTimeout(() => {  
-          let temp;
+          // let temp
           // this loops adds background color to the page's keyboard keys
           // for(let [index,code] of assertion[row].entries()) setDynamicButtonSettings([...dynamicButtonSettings, dynamicButtonSettings[temp = code === "missed" ? 0 : code === "close" ? 1 : 2].buttons= inputs[row][index] + " " + dynamicButtonSettings[temp].buttons.trim() ]);
-          for(let [index,code] of assertion[row].entries()) setDynamicButtonSettings([...dynamicButtonSettings, dynamicButtonSettings[temp = code === "missed" ? 0 : code === "close" ? 1 : 2].buttons= inputs[row][index] + " " + dynamicButtonSettings[temp].buttons.trim() ]);
+          for(let [index,code] of assertion[row].entries()) {
+            // setDynamicButtonSettings([...dynamicButtonSettings, dynamicButtonSettings[temp = code === "missed" ? 0 : code === "close" ? 1 : 2].buttons= inputs[row][index] + " " + dynamicButtonSettings[temp].buttons.trim() ]);
+            // const temp = code === "missed" ? 0 : code === "close" ? 1 : 2;
+            // console.log(dynamicButtonSettings)
+            // debugger
+            const clone = new Map(dynamicButtonSettings);
+            clone.set(code, {
+              ...clone.get(code), 
+                buttons: inputs[row][index] + " " + clone.get(code).buttons.trim()
+            })
+            dynamicButtonSettings = clone;
+            // clone.set('config', [...clone.get('config'))
+            // setDynamicButtonSettings(clone);
+            // console.log(dynamicButtonSettings)
+            
+          }
+          setInputsHandle((prev) => !prev);
           if(correct === target.length) return resolve(1);
           attempts[word_array.join("")] = 1;
           return resolve(0);
         }, steps*step_delay + 500)
     })
-  },[dynamicButtonSettings])
+  },[])
 
   const didWinGame = useCallback(async (row, word_array) => {
     return processWord(row, word_array);
@@ -224,13 +242,13 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
     // assertion matrix
     assertion = assertion_matrix();
     // keyboard state variable; manages keyboard keys color codes
-    setDynamicButtonSettings((buttonTheme) => {
-      return [...buttonTheme]
-    });
+    // setDynamicButtonSettings(new Map(buttonTheme));
+    dynamicButtonSettings = buttonTheme_function();
     // reinitializes the editable cell
     clearEditable();
     // reinitializes the modal
     clearModal();
+    setInputsHandle((prev) => !prev)
   },[clearModal,detectKeyDown])
 
   useEffect(() => {
@@ -250,7 +268,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
       <div className='new_game'>
         <button onClick={() => {
           reinitialzeGame();
-          setInputsHandle((prev) => !prev)
+          // setInputsHandle((prev) => !prev)
           boardRef.current.focus();
           console.log(inputs, assertion, dynamicButtonSettings,editableCell, editableCellRef.current, queue, counter, target, placeHolderCounter, attempts, page.current)
           }}
@@ -290,7 +308,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
         layout={keyboardLayout}
         layoutName="default"
         display={keyboardDisplay}
-        buttonTheme={dynamicButtonSettings}
+        buttonTheme={[...dynamicButtonSettings.values()]}
         onKeyPress={detectKeyDown}
       />
     </div>

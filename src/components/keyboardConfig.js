@@ -27,6 +27,12 @@ export const {
     buttonTheme 
 } = keyboardConfig;
 
+export const buttonTheme_function = () => new Map([
+    [MISSED, {class: MISSED, buttons: " "}],
+    [CLOSE, {class: CLOSE, buttons: " "}],
+    [RIGHT, {class: RIGHT, buttons: " "}],
+])
+
 
 
 
