@@ -11,8 +11,8 @@ import {
   MISSED,
   CLOSE,
   RIGHT,
-  INPUTS_MATRIX,
-  ASSERTION_MATRIX
+  inputs_matrix,
+  assertion_matrix
 } from './gameSettings.js';
 import { WORD_LIST } from '../lib/wordList.js';
 import Keyboard from 'react-simple-keyboard';
@@ -27,7 +27,8 @@ let queue,
     target_map, 
     placeHolderCounter, 
     attempts,
-    inputs
+    inputs,
+    assertion
 
 
 const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal }) => {
@@ -39,7 +40,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
   // const [inputs, setInputs] = useState(new Array(6).fill(0).map(el => new Array(5).fill("")));
   const [inputsHandle, setInputsHandle] = useState(false);
   // Color codes matrix (assertion matrix) for processed words
-  const [assertion, setAssertion] = useState(ASSERTION_MATRIX);
+  // const [assertion, setAssertion] = useState(ASSERTION_MATRIX);
   // Two variables are needed to successfully toggle the "glow" class name on a cell (editableCell variable)
   // and to read the id of the toggled cell in the detectKeyDown function (editableCellRef variable;
   // editableCell variable is an empty string in detectKeyDown function even after setting it to an id string on the cell's click event)
@@ -59,12 +60,17 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
         if(i--) {
           // this logic adds background color to current row cells one character at a time
           if(!target_map[word_array[index]]){ 
-            setAssertion([...assertion, assertion[row][index] = MISSED ]);
+            // setAssertion([...assertion, assertion[row][index] = MISSED ]);
+            assertion[row][index] = MISSED;
+            setInputsHandle((prev) => !prev)
           } else if(word_array[index] === target[index]) {
-            setAssertion([...assertion, assertion[row][index] = RIGHT]);
+            // setAssertion([...assertion, assertion[row][index] = RIGHT]);
+            assertion[row][index] = RIGHT;
             correct++;
+            setInputsHandle((prev) => !prev)
           } else {
-            setAssertion([...assertion, assertion[row][index] = CLOSE]);
+            assertion[row][index] = CLOSE;
+            setInputsHandle((prev) => !prev)
           }
           delayedSteps(i);
         } 
@@ -78,13 +84,14 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
         setTimeout(() => {  
           let temp;
           // this loops adds background color to the page's keyboard keys
+          // for(let [index,code] of assertion[row].entries()) setDynamicButtonSettings([...dynamicButtonSettings, dynamicButtonSettings[temp = code === "missed" ? 0 : code === "close" ? 1 : 2].buttons= inputs[row][index] + " " + dynamicButtonSettings[temp].buttons.trim() ]);
           for(let [index,code] of assertion[row].entries()) setDynamicButtonSettings([...dynamicButtonSettings, dynamicButtonSettings[temp = code === "missed" ? 0 : code === "close" ? 1 : 2].buttons= inputs[row][index] + " " + dynamicButtonSettings[temp].buttons.trim() ]);
           if(correct === target.length) return resolve(1);
           attempts[word_array.join("")] = 1;
           return resolve(0);
         }, steps*step_delay + 500)
     })
-  },[assertion, dynamicButtonSettings])
+  },[dynamicButtonSettings])
 
   const didWinGame = useCallback(async (row, word_array) => {
     return processWord(row, word_array);
@@ -193,7 +200,9 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
   },[editCell, didWinGame, openModal, validWord, wonGame, lostGame, inputsHandle])
 
   const reinitialzeGame = useCallback(() => {
-    console.log("inside reinitializer")
+    // if user wins or loses, the queue will be empty and the board will not be accessible; re-enable the board and keyboard
+    // if user re-starts the game before finishing game, event listener will be active, hence there is not need to add evetn listener in this case 
+    if(queue && !queue.length) page.current.addEventListener('keydown', detectKeyDown, false);
     // Used for accessing the current row, namely, queue[0])
     queue = [...QUEUE];
     // Used for keeping track of next available position in current row
@@ -210,26 +219,19 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
     placeHolderCounter = PLACEHOLDERCOUNTER;
     // stores the user's processed words
     attempts = {...ATTEMPTS};
-    inputs = new Array(6).fill(0).map(el => new Array(5).fill(""));
-    setAssertion(new Array(6).fill(0).map(el => new Array(5).fill(BLANK)));
+    // inputs matrix
+    inputs = inputs_matrix();
+    // assertion matrix
+    assertion = assertion_matrix();
     // keyboard state variable; manages keyboard keys color codes
-    setDynamicButtonSettings(() => {
+    setDynamicButtonSettings((buttonTheme) => {
       return [...buttonTheme]
     });
     // reinitializes the editable cell
     clearEditable();
     // reinitializes the modal
     clearModal();
-    // this line runs one time only: when page loads
-    // console.log(queue, counter, target, placeHolderCounter, attempts, page.current)
-    // if(!page.current) page.current = document;
-    // page.current = null;
-    // page.current = document;
-    // if user re-starts the game before finishing the game, makes sure event listener is not added twice to the page
-    // page.current.removeEventListener('keydown', detectKeyDown, false);
-    // // enable user's device keyboard to type on board
-    // page.current.addEventListener('keydown', detectKeyDown, false);
-  },[clearModal])
+  },[clearModal,detectKeyDown])
 
   useEffect(() => {
     // ensures that code inside conditional runs only once, on page load
@@ -238,8 +240,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
       page.current = document;
       page.current.addEventListener('keydown', detectKeyDown, false);
     }
-  // },[reinitialzeGame, detectKeyDown]);
-  },[]);
+  },[reinitialzeGame, detectKeyDown]);
 
   console.log("board was rendered")
   if(!page.current) return <div></div>
