@@ -50,22 +50,21 @@ const PortalContainer = ({ children, toggle }) => {
             ref={myRef}
         >
             <div className="portal-area" >
-                <button
-                    aria-label="Close portal"
-                    aria-labelledby="close-portal"
-                    className="_portal-close"
-                    onClick={closePortal}
-                >
-                    <span id="close-portal" className="_hide-visual">
-                        Close
-                    </span>
-                    {/* <svg className="_portal-close-icon" viewBox="0 0 40 40">
-                        <path d="M 10,10 L 30,30 M 30,10 L 10,30" />
-                    </svg> */}
-                    <img src={closeIcon} className="_portal-close-icon" alt="close icon" />
-                </button>
+                <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                    <button
+                        aria-label="Close portal"
+                        aria-labelledby="close-portal"
+                        className="_portal-close"
+                        onClick={closePortal}
+                    >
+                        <span id="close-portal" className="_hide-visual">
+                            Close
+                        </span>
+                        <img src={closeIcon} className="_portal-close-icon" alt="close icon" />
+                    </button>
+                </div>
                 <div className="portal-body">
-                    <div style={{textAlign: 'center', lineHeight: '1.4',}}>
+                    <div style={{lineHeight: '1.4',}}>
                         <div style={{padding: '0 10px 20px'}}>
                             { children }
                         </div>

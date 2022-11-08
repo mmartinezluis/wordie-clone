@@ -4,6 +4,7 @@ import Board from './components/Board';
 import Modal from 'react-modal';
 import help_icon from './help-svgrepo-com.svg';
 import PortalContainer from './components/PortalContainer';
+import Help from './sections/help';
 
 const modalCustomStyles = {
   content: {
@@ -33,6 +34,8 @@ export const modalCodes ={
   missed: "rgb(244, 63, 94)",
   lost: "#9c27b0"
 }
+
+let portal_content = {current: null};
 
 Modal.setAppElement('#root');
 
@@ -80,13 +83,27 @@ function App() {
           <h2>Wordle Clone</h2>
         </div>
         <div className='header__buttons'>
-          <img src={help_icon} className="" alt="help icon" onClick={() => setToggle({})}/>
+          <img 
+            src={help_icon} 
+            className="help_icon" 
+            alt="help icon" 
+            onClick={() => {
+                portal_content.current = "help";
+                setToggle({});  
+            }}
+          />
           <div className='new_game__fake'>
             {/* This is a dummy button; the true button is placed on top of this */}
             {/* button using CSS; the true button belongs to the Board component */}
             <button style={{visibility: 'hidden'}}>New Game</button>
           </div>
-          <div onClick={() => setToggle({})} className='about'>
+          <div 
+            className='about_link'
+            onClick={() => {
+              portal_content.current = "about"
+              setToggle({})
+            }}
+          >
             About
           </div>
         </div>
@@ -98,57 +115,11 @@ function App() {
         setModalText={setModalText}
         clearModal={clearModal}
       />
-      <PortalContainer
-        toggle={toggle}
-      >
-            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
-            THIS IS A LONG TEXT AND A CELL  
+      <PortalContainer toggle={toggle}>
+          {portal_content.current === "help" 
+            ? <Help/> 
+            : <div></div> 
+          }
       </PortalContainer>
     </div>
   );
