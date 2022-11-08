@@ -17,14 +17,14 @@ const Help = () => {
         <div className='help'>
             <h2>How to Play</h2>
             <p>The goal of the game is to guess the five-characters word in at most 6 attempts.
-               After every attempt, each of the letters in the board will be color coded depending on 
+               After every attempt, each of the letters in the attempted row will be color-coded depending on 
                whether the letter is not in the word at all (gray cells), it's in the word, but not in the
                correct position (yellow cells), or it's in the word and in the correct position (green cells).
             </p>
             <div className='board'>
                 <div className='row'>
                     {new Array(1).fill(0).map((r, ri) => new Array(5).fill(0).map((c, ci) => {
-                        return <div className={`cell ${assertion_matrix[ri][ci]}`}>
+                        return <div className={`cell ${assertion_matrix[ri][ci]}`} key={ci}>
                                     {examples[0][ci]}
                                 </div>
                     }))}
@@ -39,7 +39,9 @@ const Help = () => {
             <div className='board'>
                 <div className='row'>
                     {new Array(1).fill(0).map((r, ri) => new Array(5).fill(0).map((c, ci) => {
-                        return <div className={ `cell  ${ci === 2 ? 'glow' : ''} `}>{examples[1][ci]}</div>
+                        return <div className={ `cell  ${ci === 2 ? 'glow' : ''} `} key={ci}>
+                                    {examples[1][ci]}
+                                </div>
                     }))}
                 </div>
             </div>
@@ -53,7 +55,9 @@ const Help = () => {
             <div className='board'>
                 <div className='row'>
                     {new Array(1).fill(0).map((r, ri) => new Array(5).fill(0).map((c, ci) => {
-                        return <div className='cell'>{examples[2][ci]}</div>
+                        return <div className='cell' key={ci}>
+                                    {examples[2][ci]}
+                                </div>
                     }))}
                 </div>
             </div>

@@ -4,7 +4,7 @@ import Board from './components/Board';
 import Modal from 'react-modal';
 import help_icon from './help-svgrepo-com.svg';
 import PortalContainer from './components/PortalContainer';
-import Help from './sections/help';
+import Help from './sections/Help';
 import About from './sections/About';
 
 const modalCustomStyles = {
@@ -42,6 +42,7 @@ Modal.setAppElement('#root');
 
 function App() {
 
+  // @TODO: move modal to a react context
   const [modalIsOpen, setIsOpen] = useState(false);
   const [modalStatus, setModalStatus] = useState(modalCodes.missed);
   const [modalText, setModalText] = useState("");
