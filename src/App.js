@@ -5,6 +5,7 @@ import Modal from 'react-modal';
 import help_icon from './help-svgrepo-com.svg';
 import PortalContainer from './components/PortalContainer';
 import Help from './sections/help';
+import About from './sections/About';
 
 const modalCustomStyles = {
   content: {
@@ -117,8 +118,8 @@ function App() {
       />
       <PortalContainer toggle={toggle}>
           {portal_content.current === "help" 
-            ? <Help/> 
-            : <div></div> 
+            ? <Help /> 
+            : <About />
           }
       </PortalContainer>
     </div>
