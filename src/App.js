@@ -86,6 +86,11 @@ function App() {
         <meta name="og:url" content="https://wordle-clone-dsa.netlify.app"/>
         <meta name="og:site_name" content="Wordle Clone DSA"/>
         <meta name="og:type" content="website"/>
+
+        <meta property='og:title' content="Wordle Clone DSA" />
+        <meta property='og:image' content="https://user-images.githubusercontent.com/75151961/200998814-a9a4d7bb-a542-4ba6-a2de-aa356d37a58e.png" />
+        <meta property='og:description' content="React JS clone of the popular mobile game Wordle" />
+        <meta property='og:url' content= "https://wordle-clone-dsa.netlify.app" />
        </Helmet>
       <Modal
           isOpen={modalIsOpen}
