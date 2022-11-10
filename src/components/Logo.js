@@ -1,5 +1,5 @@
 import React from 'react';
-
+// app dynamic logo
 export const Logo = () => {
     return (
         <div className='board logo'>
