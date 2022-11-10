@@ -79,7 +79,6 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
           // this loop adds background color to the page's keyboard keys
           const clone = new Map(dynamicButtonSettings);
           for(let [index,code] of assertion[row].entries()) {
-            
             clone.set(code, {
               ...clone.get(code), 
                 buttons: inputs[row][index] + " " + clone.get(code).buttons.trim().slice()
@@ -135,7 +134,6 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
     console.log('current target', target, "\ntarget map is", target_map);
     // If no row to process, skip the function; this happens when a word is being processed or when user wins or loses game
     if(queue[0] === undefined) return;
-    // if(queue[0] === undefined) return;
     // 'e.key' comes from typing on user's device keyboard; 'e' alone comes from typing (clicking) on page keyboard
     const key = e.key ? e.key.toUpperCase() : e;
     const row = queue[0];
@@ -157,8 +155,6 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
         openModal("You already used that word");
         return;
       }
-      // Deactivate user input while processing word
-      // page.current.removeEventListener('keydown', detectKeyDown, true);
       // Deactivate editable cell click event
       queue[0] = undefined;
       // Remove editableCell selection if user had selected a cell before pressing Enter
@@ -168,9 +164,6 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
         wonGame();
         return;
       }  
-      // tricky; add the eventlistner back only if user presses Enter using their device keyboard;
-      // the page keyboard seems to add an event listener on the page automatically on pressing enter; hence, adding the event again will cause double typing for every key pressed on users' device keyboard
-      // if(e.key) page.current.addEventListener('keydown', detectKeyDown, true);
       // Game was not won; remove access to current row and proceed to next row
       queue.shift();
       counter = 0;
@@ -206,12 +199,6 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
   },[editCell, didWinGame, openModal, validWord, wonGame, lostGame, inputsHandle])
 
   const reinitialzeGame = useCallback(() => {
-    // if user wins or loses, the queue will be empty and the board will not be accessible; re-enable the board and keyboard
-    // if user re-starts the game before finishing game, event listener will be active, hence there is no need to add event listener in this case 
-    // if(queue && !queue.length) {
-    //   page.current.removeEventListener('keydown', detectKeyDown, true)
-    //   page.current.addEventListener('keydown', detectKeyDown, true);
-    // } 
     // Used for accessing the current row, namely, queue[0])
     queue = [...QUEUE];
     // Used for keeping track of next available position in current row
@@ -257,10 +244,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
     <div>
       {/* This button is placed in the app header using CSS */}
       <div className='new_game'>
-        <button onClick={() => {
-            reinitialzeGame();
-          }}
-        >
+        <button onClick={reinitialzeGame}>
           New Game
         </button>
       </div>
