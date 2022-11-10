@@ -4,7 +4,8 @@ const examples = [
     ['S', 'T', 'A', 'C', 'K'],
     ['P', 'H', 'A', 'S', 'E'],
     ['G', 'R', 'A', 'P', 'E'],
-    ['Q', 'U', 'O', 'U', 'E'],
+    // ['Q', 'U', 'O', 'U', 'E'],
+    ['W', 'C', 'D', 'S', 'A'],
     ['R', '-', 'S', '-', 'T']
 ]
 
@@ -17,13 +18,13 @@ const assertion_matrix = [
 ]
 
 const Help = () => {
-    return(
+    return (
         <div className='help'>
             <h2>How to Play</h2>
             <p>The goal of the game is to guess the five-characters word in at most 6 attempts.
                After every attempt, each of the letters in the attempted row will be color-coded depending on 
                whether the letter is not in the word at all (gray cells), it's in the word, but not in the
-               correct position (yellow cells), or it's in the word and in the correct position (green cells).
+               correct position (yellow cells), or it's in the word and in the correct position (green cells). Examples:
             </p>
             <div className='board'>
                 <div className='row'>
@@ -64,7 +65,7 @@ const Help = () => {
             <div className='board'>
                 <div className='row'>
                     {new Array(1).fill(0).map((r, ri) => new Array(5).fill(0).map((c, ci) => {
-                        return <div className={ `cell  ${ci === 2 ? 'glow' : ''} `} key={ci}>
+                        return <div className={ `cell  ${ci === 2 ? 'glow-logo' : ''} `} key={ci}>
                                     {examples[3][ci]}
                                 </div>
                     }))}
@@ -90,7 +91,7 @@ const Help = () => {
 
             <h3>Re-Starting the Game</h3>
             <p>You can start a new game at any time by pressing the <em>New Game</em> button in the header section.</p>
-            <p>Can you guess the three words from the above examples?</p>
+            <p>Can you guess the words for PHASE, GRAPE, and QUOUE from the above examples? (Hint: they come from data structures and algorithms topics)</p>
             <p>Have fun with Wordle Clone!!!</p>
         </div>
     )
