@@ -65,7 +65,7 @@ const Help = () => {
             <div className='board'>
                 <div className='row'>
                     {new Array(1).fill(0).map((r, ri) => new Array(5).fill(0).map((c, ci) => {
-                        return <div className={ `cell  ${ci === 2 ? 'glow-logo' : ''} `} key={ci}>
+                        return <div className={ `cell  ${ci === 2 ? 'glow' : ''} `} key={ci}>
                                     {examples[3][ci]}
                                 </div>
                     }))}

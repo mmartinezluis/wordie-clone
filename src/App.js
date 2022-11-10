@@ -7,6 +7,7 @@ import PortalContainer from './components/PortalContainer';
 import Help from './sections/Help';
 import About from './sections/About';
 import { Logo } from './components/Logo';
+import { Helmet } from 'react-helmet';
 
 const modalCustomStyles = {
   content: {
@@ -68,22 +69,24 @@ function App() {
 
   return (
     <div className="App">
-      {/* <!-- COMMON TAGS --> */}
-      <title>Wordle Clone DSA</title>
-      {/* <!-- Search Engine --> */}
-      <meta name="description" content="React JS clone of the popular mobile game Wordle"/>
-      <meta name="image" content="https://user-images.githubusercontent.com/75151961/200998814-a9a4d7bb-a542-4ba6-a2de-aa356d37a58e.png"/>
-      {/* <!-- Schema.org for Google --> */}
-      <meta itemprop="name" content="Wordle Clone DSA"/>
-      <meta itemprop="description" content="React JS clone of the popular mobile game Wordle"/>
-      <meta itemprop="image" content="https://user-images.githubusercontent.com/75151961/200998814-a9a4d7bb-a542-4ba6-a2de-aa356d37a58e.png"/>
-      {/* <!-- Open Graph general (Facebook, Pinterest & Google+) --> */}
-      <meta name="og:title" content="Wordle Clone DSA"/>
-      <meta name="og:description" content="React JS clone of the popular mobile game Wordle"/>
-      <meta name="og:image" content="https://user-images.githubusercontent.com/75151961/200998814-a9a4d7bb-a542-4ba6-a2de-aa356d37a58e.png"/>
-      <meta name="og:url" content="https://wordle-clone-dsa.netlify.app"/>
-      <meta name="og:site_name" content="Wordle Clone DSA"/>
-      <meta name="og:type" content="website"/>
+      <Helmet>
+        {/* <!-- COMMON TAGS --> */}
+        <title>Wordle Clone DSA</title>
+        {/* <!-- Search Engine --> */}
+        <meta name="description" content="React JS clone of the popular mobile game Wordle"/>
+        <meta name="image" content="https://user-images.githubusercontent.com/75151961/200998814-a9a4d7bb-a542-4ba6-a2de-aa356d37a58e.png"/>
+        {/* <!-- Schema.org for Google --> */}
+        <meta itemprop="name" content="Wordle Clone DSA"/>
+        <meta itemprop="description" content="React JS clone of the popular mobile game Wordle"/>
+        <meta itemprop="image" content="https://user-images.githubusercontent.com/75151961/200998814-a9a4d7bb-a542-4ba6-a2de-aa356d37a58e.png"/>
+        {/* <!-- Open Graph general (Facebook, Pinterest & Google+) --> */}
+        <meta name="og:title" content="Wordle Clone DSA"/>
+        <meta name="og:description" content="React JS clone of the popular mobile game Wordle"/>
+        <meta name="og:image" content="https://user-images.githubusercontent.com/75151961/200998814-a9a4d7bb-a542-4ba6-a2de-aa356d37a58e.png"/>
+        <meta name="og:url" content="https://wordle-clone-dsa.netlify.app"/>
+        <meta name="og:site_name" content="Wordle Clone DSA"/>
+        <meta name="og:type" content="website"/>
+       </Helmet>
       <Modal
           isOpen={modalIsOpen}
           style={Object.assign(modalCustomStyles, modalCustomStyles.content["backgroundColor"]= modalStatus )}
