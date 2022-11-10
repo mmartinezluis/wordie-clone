@@ -6,12 +6,13 @@ import help_icon from './help-svgrepo-com.svg';
 import PortalContainer from './components/PortalContainer';
 import Help from './sections/Help';
 import About from './sections/About';
+import { Logo } from './components/Logo';
 
 const modalCustomStyles = {
   content: {
     inset: 'unset',
     borderRadius: '10px',
-    padding: '10px 15px',
+    padding: '7px 15px',
     fontSize: '16px',
     color: 'rgb(51, 51, 51)',
     overflow: 'unset',
@@ -24,7 +25,7 @@ const modalCustomStyles = {
     minWidth: '400px',
     height: '4%',
     translate: '-50% 80%',
-    zIndex: '100',
+    zIndex: '99',
     inset: '5% 0% 0% 50%',
     position: 'fixed'
   }
@@ -42,10 +43,12 @@ Modal.setAppElement('#root');
 
 function App() {
 
+  // Modal variables
   // @TODO: move modal to a react context
   const [modalIsOpen, setIsOpen] = useState(false);
   const [modalStatus, setModalStatus] = useState(modalCodes.missed);
   const [modalText, setModalText] = useState("");
+  // Portal container variable
   const [toggle, setToggle] = useState(false);
 
   const openModal = (text, time=3000) => {
@@ -82,7 +85,8 @@ function App() {
       <header className="App-header">
         <div className='header__filler'></div>
         <div className='header__title'>
-          <h2>Wordle Clone</h2>
+          {/* <h2>Wordle Clone</h2> */}
+          <Logo />
         </div>
         <div className='header__buttons'>
           <img 

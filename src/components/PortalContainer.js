@@ -2,18 +2,18 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import closeIcon from '../close-svgrepo-com.svg';
 
-const PortalContainer = ({ children, toggle }) => {
+const PortalContainer = ({ children, toggle, lockScroll=false }) => {
 
     const [isShown, setIsShown] = useState(false);
 
     const showPortal = useCallback(() => {
         setIsShown(true); 
-        toggleScrollLock();
-    },[])
+        lockScroll && toggleScrollLock();
+    },[lockScroll])
 
     const closePortal = () => {
         setIsShown(false);
-        toggleScrollLock();
+        lockScroll && toggleScrollLock();
     };
 
     const onKeyDown = (event) => {
@@ -65,7 +65,7 @@ const PortalContainer = ({ children, toggle }) => {
                 </div>
                 <div className="portal-body">
                     <div style={{lineHeight: '1.4',}}>
-                        <div style={{padding: '0 10px 20px'}}>
+                        <div style={{padding: '0 5px'}}>
                             { children }
                         </div>
                     </div>

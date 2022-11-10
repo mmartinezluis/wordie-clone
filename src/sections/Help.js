@@ -65,7 +65,7 @@ const Help = () => {
 
             <h3>Re-starting the Game</h3>
             <p>You can start a new game at any time by pressing the New Game button in the header section.</p>
-            <p>Can you guess the words from the above examples?</p>
+            <p>Can you guess the three words from the above examples?</p>
             <p>Have fun with Wordle Clone!!!</p>
         </div>
     )
