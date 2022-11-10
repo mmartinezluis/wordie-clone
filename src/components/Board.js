@@ -38,7 +38,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
   const page = useRef(null);
   const boardRef = useRef(null);
   // Takes care of re-redering the component when stateless variables are changed
-  const [inputsHandle, setInputsHandle] = useState(false);
+  const [inputsHandle, setInputsHandle] = useState(null);
   // Two variables are needed to successfully toggle the "glow" class name on a cell (editableCell variable)
   // and to read the id of the toggled cell in the detectKeyDown function (editableCellRef variable;
   // editableCell variable is an empty string in detectKeyDown function even after setting it to an id string on the cell's click event)
@@ -57,14 +57,14 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
           // this logic adds background color to current row cells one character at a time
           if(!target_map[word_array[index]]){ 
             assertion[row][index] = MISSED;
-            setInputsHandle((prev) => !prev)
+            setInputsHandle({})
           } else if(word_array[index] === target[index]) {
             assertion[row][index] = RIGHT;
             correct++;
-            setInputsHandle((prev) => !prev)
+            setInputsHandle({})
           } else {
             assertion[row][index] = CLOSE;
-            setInputsHandle((prev) => !prev)
+            setInputsHandle({})
           }
           delayedSteps(i);
         } 
@@ -85,7 +85,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
             })
           }
           dynamicButtonSettings = clone;
-          setInputsHandle((prev) => !prev);
+          setInputsHandle({});
           if(correct === target.length) return resolve(1);
           attempts[word_array.join("")] = 1;
           return resolve(0);
@@ -130,7 +130,6 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
   },[])
 
   const detectKeyDown = useCallback(async (e) => {
-    console.log(inputs, queue, inputsHandle)
     console.log('current target', target, "\ntarget map is", target_map);
     // If no row to process, skip the function; this happens when a word is being processed or when user wins or loses game
     if(queue[0] === undefined) return;
@@ -178,7 +177,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
         counter -= 1;
         if(inputs[row][counter] === "-") placeHolderCounter--;
         inputs[row][counter] = "";
-        setInputsHandle((prev) => !prev);
+        setInputsHandle({});
         // If user pressed backspace after clicking on an editable cell, deactivate the editable cell
         if(editableCellRef.current.length) clearEditable();
         return;
@@ -193,10 +192,10 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
         if(placeHolderCounter < 5) placeHolderCounter++;
         inputs[row][counter] = "-";
       }
-      setInputsHandle((prev) => !prev);
+      setInputsHandle({});
       counter += 1;
     }
-  },[editCell, didWinGame, openModal, validWord, wonGame, lostGame, inputsHandle])
+  },[editCell, didWinGame, openModal, validWord, wonGame, lostGame])
 
   const reinitialzeGame = useCallback(() => {
     // Used for accessing the current row, namely, queue[0])
@@ -225,7 +224,8 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
     clearEditable();
     // reinitializes the modal
     clearModal();
-    setInputsHandle((prev) => !prev);
+    // setInputsHandle((prev) => !prev);
+    setInputsHandle({});
     boardRef.current && boardRef.current.focus();
   },[clearModal])
 
@@ -238,8 +238,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
     }
   },[reinitialzeGame, detectKeyDown]);
 
-  console.log("board was rendered")
-  if(!page.current) return <div></div>
+  if(!page.current || !assertion || !inputsHandle) return <div></div>
   return (
     <div>
       {/* This button is placed in the app header using CSS */}
@@ -265,7 +264,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
                               }} 
                               dataid={cell_id}
                               key={parseInt(cell_id)} 
-                              className={`cell ${assertion[row_index][col_index]} ${editableCell === cell_id ? "glow" : ""}`} 
+                              className={`cell ${assertion && assertion[row_index][col_index]} ${editableCell === cell_id ? "glow" : ""}`} 
                           >
                               {inputs[row_index][col_index]}    
                           </div>
