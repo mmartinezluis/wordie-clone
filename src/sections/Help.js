@@ -58,7 +58,7 @@ const Help = () => {
             <br/>
 
             <h3>Editing Cells</h3>
-            <p>If you click on any nonempty cell withiin the current row, that cell becomes editable, 
+            <p>If you click on any nonempty cell within the current row, that cell becomes editable, 
                 and it will glow:
             </p>
             <div className='board'>
