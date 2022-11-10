@@ -195,6 +195,7 @@ h1,h2,h3,h4,h5,h6 {
   margin: 12px auto;
 }
 
+
 .logo .cell {
   width: 21px; 
   height: 21px; 
@@ -278,6 +279,21 @@ h1,h2,h3,h4,h5,h6 {
 .scroll-lock {
   overflow: hidden;
   margin-right: 17px;
+}
+
+
+.help p {
+  margin: 8px 0px 12px;
+}
+
+.help .examples {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0 10px;
+}
+
+.help .examples:last-child {
+  padding-bottom: 0px;
 }
 
 

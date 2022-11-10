@@ -1,13 +1,17 @@
 import React from 'react';
 
 const examples = [
-    ['G', 'R', 'E', 'A', 'T'],
+    ['S', 'T', 'A', 'C', 'K'],
+    ['P', 'H', 'A', 'S', 'E'],
+    ['G', 'R', 'A', 'P', 'E'],
     ['Q', 'U', 'O', 'U', 'E'],
     ['R', '-', 'S', '-', 'T']
 ]
 
 const assertion_matrix = [
-    ['right', 'right', 'missed', 'close', 'missed'],
+    ['right', '', '', '', ''],
+    ['', 'close', '', '', ''],
+    ['', '', '', '', 'missed'],
     ['', '', '', '', ''],
     ['', '', '', '', '']
 ]
@@ -24,13 +28,34 @@ const Help = () => {
             <div className='board'>
                 <div className='row'>
                     {new Array(1).fill(0).map((r, ri) => new Array(5).fill(0).map((c, ci) => {
-                        return <div className={`cell ${assertion_matrix[ri][ci]}`} key={ci}>
+                        return <div className={`cell ${assertion_matrix[0][ci]}`} key={ci}>
                                     {examples[0][ci]}
                                 </div>
                     }))}
                 </div>
             </div>
-            <br/><br/>
+            <div className='examples'><span><strong>S</strong> is in the word and in the correct position</span></div>
+            <div className='board'>
+                <div className='row'>
+                    {new Array(1).fill(0).map((r, ri) => new Array(5).fill(0).map((c, ci) => {
+                        return <div className={`cell ${assertion_matrix[1][ci]}`} key={ci}>
+                                    {examples[1][ci]}
+                                </div>
+                    }))}
+                </div>
+            </div>
+            <div className='examples'><span><strong>H</strong> is in the word, but in the wrong position</span></div>
+            <div className='board'>
+                <div className='row'>
+                    {new Array(1).fill(0).map((r, ri) => new Array(5).fill(0).map((c, ci) => {
+                        return <div className={`cell ${assertion_matrix[2][ci]}`} key={ci}>
+                                    {examples[2][ci]}
+                                </div>
+                    }))}
+                </div>
+            </div>
+            <div className='examples'><span><strong>E</strong> is not in the word</span></div>
+            <br/>
 
             <h3>Editing Cells</h3>
             <p>If you click on any nonempty cell withiin the current row, that cell becomes editable, 
@@ -40,7 +65,7 @@ const Help = () => {
                 <div className='row'>
                     {new Array(1).fill(0).map((r, ri) => new Array(5).fill(0).map((c, ci) => {
                         return <div className={ `cell  ${ci === 2 ? 'glow' : ''} `} key={ci}>
-                                    {examples[1][ci]}
+                                    {examples[3][ci]}
                                 </div>
                     }))}
                 </div>
@@ -56,15 +81,15 @@ const Help = () => {
                 <div className='row'>
                     {new Array(1).fill(0).map((r, ri) => new Array(5).fill(0).map((c, ci) => {
                         return <div className='cell' key={ci}>
-                                    {examples[2][ci]}
+                                    {examples[4][ci]}
                                 </div>
                     }))}
                 </div>
             </div>
             <br/><br/>
 
-            <h3>Re-starting the Game</h3>
-            <p>You can start a new game at any time by pressing the New Game button in the header section.</p>
+            <h3>Re-Starting the Game</h3>
+            <p>You can start a new game at any time by pressing the <em>New Game</em> button in the header section.</p>
             <p>Can you guess the three words from the above examples?</p>
             <p>Have fun with Wordle Clone!!!</p>
         </div>
