@@ -223,7 +223,7 @@ h1,h2,h3,h4,h5,h6 {
   position: fixed;
   top: 0;
   left: 50%;
-  translate: -50% 90px;
+  translate: -50% 75px;
   max-width: 400px;
   min-width: 300px;
   min-height: 320px;
