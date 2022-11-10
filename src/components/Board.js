@@ -120,7 +120,6 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
   }
 
   const editCell = useCallback((row, key) => {
-    console.log("waiting on edits");
     // If user input is a placeholder and editable cell currently has a letter, increase placeholder count
     if(!ALPHABET[key] && inputs[row][editableCellRef.current[1]] !== "-") placeHolderCounter++;
     // If user input is a letter and editable cell currently has a placeholder, decrease placeholder count
@@ -130,13 +129,11 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
   },[])
 
   const detectKeyDown = useCallback(async (e) => {
-    console.log('current target', target, "\ntarget map is", target_map);
     // If no row to process, skip the function; this happens when a word is being processed or when user wins or loses game
     if(queue[0] === undefined) return;
     // 'e.key' comes from typing on user's device keyboard; 'e' alone comes from typing (clicking) on page keyboard
     const key = e.key ? e.key.toUpperCase() : e;
     const row = queue[0];
-    console.log(key)
     if(key === 'ENTER') {
       if(placeHolderCounter > 0) {
         openModal("Please remove placeholders");
@@ -224,8 +221,9 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
     clearEditable();
     // reinitializes the modal
     clearModal();
-    // setInputsHandle((prev) => !prev);
+    // triggers a component rerender
     setInputsHandle({});
+    // brings focus back to board, specially after pressing the New Game button
     boardRef.current && boardRef.current.focus();
   },[clearModal])
 
@@ -264,7 +262,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
                               }} 
                               dataid={cell_id}
                               key={parseInt(cell_id)} 
-                              className={`cell ${assertion && assertion[row_index][col_index]} ${editableCell === cell_id ? "glow" : ""}`} 
+                              className={`cell ${assertion[row_index][col_index]} ${editableCell === cell_id ? "glow" : ""}`} 
                           >
                               {inputs[row_index][col_index]}    
                           </div>
