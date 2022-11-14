@@ -7,7 +7,7 @@ Welcome to __Wordle Clone DSA__. Wordle Clone DSA (WCDSA) is a React JS web clon
 ## Background
 Wordle Clone DSA was puposefully designed to use Data Structures & Algorithms (DSA) to the greatest extend possible to produce efficient code. WCDSA utilizes matrices, a queue, and pointers to process individual user inputs in constant time (O(1)). These data structures also allow to more easiy implement the special features of specific-cell editing and adding placeholders (features that are usually missing in other web clones of Wordle). 
 
-## Installing Wordle Clone DSA Locally
+## Installion
 To use WCDSA locally, in your terminal, run
 ```
 git clone https://github.com/mmartinezluis/wordle-clone.git
