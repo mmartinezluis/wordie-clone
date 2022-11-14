@@ -1,4 +1,4 @@
-[]ogo]: https://user-images.githubusercontent.com/75151961/200998814-a9a4d7bb-a542-4ba6-a2de-aa356d37a58e.png [Wordle Clone DSA]
+[logo]: https://user-images.githubusercontent.com/75151961/200998814-a9a4d7bb-a542-4ba6-a2de-aa356d37a58e.png "Wordle Clone DSA"
 
 # Wordle Clone DSA
 
