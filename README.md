@@ -1,6 +1,5 @@
-![alt text](https://user-images.githubusercontent.com/75151961/200998814-a9a4d7bb-a542-4ba6-a2de-aa356d37a58e.png "Wordle Clone DSA")
-
 # Wordle Clone DSA
+![alt text](https://user-images.githubusercontent.com/75151961/200998814-a9a4d7bb-a542-4ba6-a2de-aa356d37a58e.png "Wordle Clone DSA")
 
 ## Introduction
 Welcome to __Wordle Clone DSA__. Wordle Clone DSA (WCDSA) is a React JS web clone of the mobile app game Wordle. WCDSA was developed from scratch until achieving the core functionalities of the mobile app game. WCDSA is playable in desktop and mobile. You can play with Wordle Clone DSA at [wordle-clone-dsa.netlify.app](https://wordle-clone-dsa.netlify.app/).
