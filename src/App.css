@@ -103,8 +103,12 @@ h1,h2,h3,h4,h5,h6 {
   align-items: center;
 }
 
-.board:focus-visible {
-  outline:0px;
+.board:focus {
+  outline-style: none;
+}
+
+.board:focus-visible { 
+  outline-style: none;
 }
 
 .new_game__fake button,
