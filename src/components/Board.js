@@ -34,8 +34,9 @@ let queue,
 let dynamicButtonSettings;
 
 const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal }) => {
-  // Used to attach/dettach a keydown event listerner on the page
+  // Used to attach/detach a keydown event listerner on the page
   const page = useRef(null);
+  // Used to bring focus to the board
   const boardRef = useRef(null);
   // Takes care of re-redering the component when stateless variables are changed
   const [inputsHandle, setInputsHandle] = useState(null);
@@ -57,15 +58,13 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
           // this logic adds background color to current row cells one character at a time
           if(!target_map[word_array[index]]){ 
             assertion[row][index] = MISSED;
-            setInputsHandle({})
           } else if(word_array[index] === target[index]) {
             assertion[row][index] = RIGHT;
             correct++;
-            setInputsHandle({})
           } else {
             assertion[row][index] = CLOSE;
-            setInputsHandle({})
           }
+          setInputsHandle({});
           delayedSteps(i);
         } 
       }, i === steps ? 300 : step_delay)
@@ -165,7 +164,6 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
       counter = 0;
       // If queue is empty, game is over
       if(!queue.length) {
-        // page.current.removeEventListener('keydown', detectKeyDown, true)
         lostGame();
         return;
       }
