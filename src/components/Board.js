@@ -234,7 +234,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
     }
   },[reinitialzeGame, detectKeyDown]);
 
-  if(!page.current || !assertion || !inputsHandle) return <div></div>
+  if(!page.current || !inputsHandle) return <div></div>
   return (
     <div>
       {/* This button is placed in the app header using CSS */}
@@ -245,10 +245,12 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
       </div>
       {/* This is the board */}
       <div ref={boardRef} className='board' tabIndex={-1}>
-          {new Array(6).fill(0).map((row_el, row_index) => {
+          {/* {new Array(6).fill(0).map((row_el, row_index) => { */}
+          {inputs.map((row_el, row_index) => {
               return (
               <div key={row_index} className='row'>
-                  {new Array(5).fill(0).map((col_el, col_index) => {
+                  {/* {new Array(5).fill(0).map((col_el, col_index) => { */}
+                  {row_el.map((col_el, col_index) => {
                       const cell_id = "" + row_index + col_index;
                       return (
                           <div 
