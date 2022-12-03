@@ -45,7 +45,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
   // editableCell variable is an empty string in detectKeyDown function even after setting it to an id string on the cell's click event)
   const [editableCell, setEditableCell] = useState(BLANK);
   const editableCellRef = useRef(BLANK);
-  
+
   const processWord= useCallback(async (row, word_array) => {
     let correct = 0;
     const steps = target.length;
@@ -233,7 +233,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
       page.current.addEventListener('keydown', detectKeyDown, true);
     }
   },[reinitialzeGame, detectKeyDown]);
-
+  
   if(!page.current || !inputsHandle) return <div></div>
   return (
     <div>
@@ -245,11 +245,9 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
       </div>
       {/* This is the board */}
       <div ref={boardRef} className='board' tabIndex={-1}>
-          {/* {new Array(6).fill(0).map((row_el, row_index) => { */}
           {inputs.map((row_el, row_index) => {
               return (
               <div key={row_index} className='row'>
-                  {/* {new Array(5).fill(0).map((col_el, col_index) => { */}
                   {row_el.map((col_el, col_index) => {
                       const cell_id = "" + row_index + col_index;
                       return (
@@ -264,7 +262,7 @@ const Board = ({ openModal, setIsOpen, setModalStatus, setModalText, clearModal 
                               key={parseInt(cell_id)} 
                               className={`cell ${assertion[row_index][col_index]} ${editableCell === cell_id ? "glow" : ""}`} 
                           >
-                              {inputs[row_index][col_index]}    
+                              {col_el}   
                           </div>
                       )
                   })}

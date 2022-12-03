@@ -11,5 +11,5 @@ export const MISSED = "missed";
 export const CLOSE = "close";
 export const RIGHT = "right";
 // matrices 
-export const inputs_matrix = () => new Array(6).fill(0).map(el => new Array(5).fill(""));
+export const inputs_matrix = () => Array.from({length: 6}, () => Array.from({length: 5}, () => ""));
 export const assertion_matrix = () => new Array(6).fill(0).map(el => new Array(5).fill(BLANK));
