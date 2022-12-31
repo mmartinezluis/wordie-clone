@@ -70,7 +70,9 @@ const About = () => {
         .
       </p>
 
-      <em>{"Happy coding!!! \nLuis Martinez"}</em>
+      <p>
+        <em>{`Happy coding!!! \nLuis Martinez`}</em>
+      </p>
     </div>
   );
 };
