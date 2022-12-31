@@ -71,7 +71,8 @@ const About = () => {
       </p>
 
       <p>
-        <em>{`Happy coding!!! \nLuis Martinez`}</em>
+        <em>{`Happy coding!!! 
+        Luis Martinez`}</em>
       </p>
     </div>
   );
